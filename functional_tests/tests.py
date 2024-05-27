@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright, expect, Browser
 
 from django.urls import reverse
 
-from app.models import Client, Provider
+from app.models import Client, Provider, Pet
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 playwright = sync_playwright().start()
@@ -455,3 +455,34 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
         expect(edit_action).to_have_attribute(
             "href", reverse("providers_edit", kwargs={"id": provider.id})
         )
+
+####PET####
+class PetTests(PlaywrightTestCase):
+    def test_should_validate_pet_date_of_birth_less_than_today(self):
+        today_date = get_today_date()
+
+        self.page.goto(f"{self.live_server_url}{reverse('pet_create')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        pet_name_field = self.page.get_by_label("Nombre")
+        pet_name_field.fill("Ian")
+
+        pet_date_of_birth_field = self.page.get_by_label("Fecha de nacimiento")
+        future_date = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+        # Validate future date
+        with self.page.expect_validation_error() as validation_error:
+            pet_date_of_birth_field.fill(future_date)
+            self.page.get_by_role("button", name="Guardar").click()
+        expect(validation_error.got.message).to_contain(
+            "La fecha de nacimiento de la mascota debe ser menor a la fecha actual"
+        )
+
+        # Enter a valid date in the past
+        past_date = (date.today() - timedelta(days=365)).strftime("%Y-%m-%d")
+        pet_date_of_birth_field.fill(past_date)
+        self.page.get_by_role("button", name="Guardar").click()
+
+        # Verify pet is created with valid date
+        expect(self.page.get_by_text("Luna")).to_be_visible()
