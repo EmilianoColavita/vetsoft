@@ -196,3 +196,33 @@ class PetModelTest(TestCase):
         })
         self.assertEqual(result, True)
         self.assertIsNone(errors)
+
+########################### PET ##################################
+
+class PetModelTest(TestCase):
+
+    def test_save_pet_with_future_birthday_invalid(self):
+        pet_data = {
+            "name": "Test Pet",
+            "breed": "Dog",
+            "birthday": "2025-01-01",
+            "weight": 10.0
+        }
+
+        success, errors = Pet.save_pet(pet_data)
+
+        self.assertFalse(success)
+        self.assertIn("La fecha de nacimiento debe ser anterior a la fecha actual.", errors.values())
+
+    def test_save_pet_with_valid_birthday(self):
+        pet_data = {
+            "name": "Test Pet",
+            "breed": "Dog",
+            "birthday": "2023-01-01",
+            "weight": 10.0
+        }
+
+        success, errors = Pet.save_pet(pet_data)
+
+        self.assertTrue(success)
+        self.assertIsNone(errors)
