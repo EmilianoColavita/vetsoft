@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.shortcuts import reverse
 from app.models import Client, Medicine, Pet, Product, Vet, Provider
+from datetime import date, datetime, timedelta
 
 
 class HomePageTest(TestCase):
@@ -158,3 +159,26 @@ class ProviderIntegrationTest(TestCase):
         )
 
         self.assertContains(response, "Por favor ingrese un email valido")
+
+
+####################### PET ##############################
+
+class PetsIntegrationTest(TestCase):
+  def test_cannot_create_pet_with_future_birthday(self):
+    
+    today = date.today()
+    future_date = today + timedelta(days=1)
+    pet_data = {
+        "name": "Mascota Invalida",
+        "breed": "Gato",
+        "birthday": future_date.strftime("%Y-%m-%d"),
+        "weight": 5.0,
+    }
+
+    response = self.client.post(reverse("pets_form"), data=pet_data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertTemplateUsed(response, "pets/form.html")
+
+    pets = Pet.objects.all()
+    self.assertEqual(len(pets), 0)
