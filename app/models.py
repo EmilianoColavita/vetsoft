@@ -15,6 +15,7 @@ class Client(models.Model):
 
     @classmethod
     def validate_client(cls, data):
+        """validate a client by the data passed"""
         errors = {}
 
         name = data.get("name", "")
@@ -40,6 +41,7 @@ class Client(models.Model):
 
     @classmethod
     def save_client(cls, client_data):
+        """save a client"""
         errors = cls.validate_client(client_data)
 
         if len(errors.keys()) > 0:
@@ -55,6 +57,7 @@ class Client(models.Model):
         return True, None
 
     def update_client(self, client_data):
+        """Passed a client, update it if not problem with data"""
         self.name = client_data.get("name", "") or self.name
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
@@ -79,6 +82,7 @@ class Client(models.Model):
 
 ############################################# PRODUCT ##############################################
 class Product(models.Model):
+
     """
     Representa a un producto con sus datos básicos.
     """
@@ -88,6 +92,7 @@ class Product(models.Model):
 
     @classmethod
     def save_product(cls, product_data: dict) -> tuple[bool, dict | None]:
+        """Saves a product"""
         errors = cls.validate_product(product_data)
 
         if errors:
@@ -120,6 +125,7 @@ class Product(models.Model):
         return errors or None
 
     def update_product(self, product_data: dict)  -> tuple[bool, dict | None]:
+        """update a product if data passed is correct"""
         errors = self.validate_product(product_data)
 
         if errors:
@@ -147,6 +153,7 @@ class Medicine(models.Model):
 
     @classmethod
     def save_medicine(cls, medicine_data: dict) -> tuple[bool, dict | None]:
+        """Save a medicine if data passed is correct"""
         errors = cls.validate_medicine(medicine_data)
 
         if errors:
@@ -161,6 +168,8 @@ class Medicine(models.Model):
 
     @classmethod
     def validate_medicine(cls, data: dict) -> dict | None:
+        """Validate that the passed data is correct"""
+
         errors = {
             "name": "Por favor ingrese un nombre",
             "description": "Por favor ingrese una descripción",
@@ -177,6 +186,7 @@ class Medicine(models.Model):
         return errors or None
 
     def update_medicine(self, medicine_data: dict) -> tuple[bool, dict | None]:
+        """update a product if data passed is correct"""
         errors = self.validate_medicine(medicine_data)
 
         if errors:
@@ -205,6 +215,7 @@ class Vet(models.Model):
 
     @classmethod
     def validate_vet(cls, data):
+        """Validate that the passed data is correct for a vet"""
         errors = {}
 
         name = data.get("name", "")
@@ -226,6 +237,7 @@ class Vet(models.Model):
 
     @classmethod
     def save_vet(cls, vet_data):
+        """save a vet if data passed is correct"""
         errors = cls.validate_vet(vet_data)
 
         if len(errors.keys()) > 0:
@@ -242,6 +254,7 @@ class Vet(models.Model):
         return self.name
 
     def update_vet(self, vet_data):
+        """update a vet if data passed is correct"""
         self.name = vet_data.get("name", "") or self.name
         self.email = vet_data.get("email", "") or self.email
         self.phone = vet_data.get("phone", "") or self.phone
@@ -268,6 +281,7 @@ class Provider(models.Model):
 
     @classmethod
     def validate_provider(cls, data):
+        """Validate that the passed data is correct for a provider"""
         errors = {}
 
         name = data.get("name", "")
@@ -297,6 +311,7 @@ class Provider(models.Model):
 
     @classmethod
     def save_provider(cls, provider_data):
+        """save a provider if data passed is correct"""
         errors = cls.validate_provider(provider_data)
 
         if len(errors.keys()) > 0:
@@ -313,6 +328,7 @@ class Provider(models.Model):
         return True, None
 
     def update_provider(self, provider_data):
+        """update a provider if data passed is correct"""
         self.name = provider_data.get("name", "") or self.name
         self.email = provider_data.get("email", "") or self.email
         self.phone = provider_data.get("phone", "") or self.phone
@@ -349,6 +365,7 @@ class Pet(models.Model):
 
     @classmethod
     def validate_pet(cls, data):
+        """Validate that the passed data is correct for a pet"""
         errors = {}
 
         name = data.get("name", "")
@@ -382,6 +399,7 @@ class Pet(models.Model):
 
     @classmethod
     def save_pet(cls, pet_data):
+        """save a product if data passed is correct for a pet"""
         errors = cls.validate_pet(pet_data)
         if len(errors.keys()) > 0:
             return False, errors
@@ -396,6 +414,7 @@ class Pet(models.Model):
         return True, None
 
     def update_pet(self, pet_data):
+        """update a pet if data passed is correct"""
         self.name = pet_data.get("name", "") or self.name
         self.breed = Breed.objects.get(pk=pet_data.get("breed")) or self.breed
         self.birthday = pet_data.get("birthday", "") or self.birthday

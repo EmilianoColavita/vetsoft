@@ -12,6 +12,7 @@ links = [
 
 
 def navbar(request):
+    """navbar del home"""
     def add_active(link):
         copy = link.copy()
 

@@ -6,6 +6,7 @@ from .models import Breed, Client, Medicine, Pet, Product, Provider, Vet
 
 
 def home(request):
+    """gets homes view"""
     buttonsHome = [
         {'url': reverse("clients_repo"), 'id': 'home-Clientes', 'icon': 'bi-people', 'text': 'Clientes'},
         {'url': reverse("vets_repo"), 'id': 'home-Veterinarias', 'icon': 'bi-shop', 'text': 'Veterinarias'},
@@ -21,30 +22,33 @@ def home(request):
 class ClientRepositoryView(View):
     """
     Vista para manejar el repositorio de clientes.
-    
+
     """
 
     template_name = "clients/repository.html"
 
     def get(self, request):
+        """gets a client/repo"""
         clients = Client.objects.all()
         return render(request, self.template_name, {"clients": clients})
 
 class ClientFormView(View):
     """
     Vista para manejar el formulario de clientes.
-    
+
     """
 
     template_name = "clients/form.html"
 
     def get(self, request, id=None):
+        """gets a client/form"""
         client = None
         if id is not None:
             client = get_object_or_404(Client, pk=id)
         return render(request, self.template_name, {"client": client})
 
     def post(self, request, id=None):
+        """saves a client"""
         client_id = request.POST.get("id", "")
         if client_id == "":
             saved, errors = Client.save_client(request.POST)
@@ -59,10 +63,11 @@ class ClientFormView(View):
 class ClientDeleteView(View):
     """
     Vista para manejar la eliminacion de clientes.
-    
+
     """
 
     def post(self, request):
+        """Deletes a client"""
         client_id = request.POST.get("client_id")
         client = get_object_or_404(Client, pk=int(client_id))
         client.delete()
@@ -78,6 +83,7 @@ class ProductRepositoryView(TemplateView):
     template_name = "products/repository.html"
 
     def get_context_data(self, **kwargs):
+        """gets alls the products"""
         context = super().get_context_data(**kwargs)
         context["products"] = Product.objects.all()
         return context
@@ -90,12 +96,14 @@ class ProductFormView(View):
     template_name = "products/form.html"
 
     def get(self, request, id=None):
+        """gets a product/form"""
         context = {}
         if id is not None:
             context["product"] = get_object_or_404(Product, pk=id)
         return render(request, self.template_name, context)
 
     def post(self, request, id=None):
+        """save a product"""
         product_id = request.POST.get("id", "")
         if product_id == "":
             saved, errors = Product.save_product(request.POST)
@@ -113,6 +121,7 @@ class ProductDeleteView(View):
     """
 
     def post(self, request):
+        """Deletes a product"""
         product_id = request.POST.get("product_id")
         product = get_object_or_404(Product, pk=int(product_id))
         product.delete()
@@ -129,6 +138,7 @@ class MedicineRepositoryView(TemplateView):
     template_name = "medicines/repository.html"
 
     def get_context_data(self, **kwargs):
+        """gets all the medicines"""
         context = super().get_context_data(**kwargs)
         context["medicines"] = Medicine.objects.all()
         return context
@@ -141,12 +151,14 @@ class MedicineFormView(View):
     template_name = "medicines/form.html"
 
     def get(self, request, id=None):
+        """gets a medicines/form"""
         context = {}
         if id is not None:
             context["medicine"] = get_object_or_404(Medicine, pk=id)
         return render(request, self.template_name, context)
 
     def post(self, request, id=None):
+        """saves a medicine"""
         medicine_id = request.POST.get("id", "")
         if medicine_id == "":
             saved, errors = Medicine.save_medicine(request.POST)
@@ -164,6 +176,7 @@ class MedicineDeleteView(View):
     """
 
     def post(self, request):
+        """Deletes a medicine"""
         medicine_id = request.POST.get("medicine_id")
         medicine = get_object_or_404(Medicine, pk=int(medicine_id))
         medicine.delete()
@@ -177,6 +190,7 @@ class VetRepositoryView(View):
     """
 
     def get(self, request):
+        """gets a vets/repo"""
         vets = Vet.objects.all()
         return render(request, "vets/repository.html", {"vets": vets})
 
@@ -188,12 +202,14 @@ class VetFormView(View):
     template_name = "vets/form.html"
 
     def get(self, request, id=None):
+        """gets a vets/form"""
         vet = None
         if id is not None:
             vet = get_object_or_404(Vet, pk=id)
         return render(request, self.template_name, {"vet": vet})
 
     def post(self, request, id=None):
+        """saves a vet"""
         vet_id = request.POST.get("id", "")
         errors = {}
         saved = True
@@ -214,6 +230,7 @@ class VetDeleteView(View):
     """
 
     def post(self, request):
+        """Deletes a vet"""
         vet_id = request.POST.get("vet_id")
         vet = get_object_or_404(Vet, pk=int(vet_id))
         vet.delete()
@@ -227,6 +244,7 @@ class ProviderRepositoryView(View):
     """
 
     def get(self, request):
+        """gets a providers/repo"""
         providers = Provider.objects.all()
         return render(request, "providers/repository.html", {"providers": providers})
 
@@ -238,12 +256,16 @@ class ProviderFormView(View):
     template_name = "providers/form.html"
 
     def get(self, request, id=None):
+        """gets a providers/form"""
+
         provider = None
+
         if id is not None:
             provider = get_object_or_404(Provider, pk=id)
         return render(request, self.template_name, {"provider": provider})
 
     def post(self, request, id=None):
+        """saves a provider"""
         provider_id = request.POST.get("id", "")
         errors = {}
         saved = True
@@ -264,6 +286,7 @@ class ProviderDeleteView(View):
     """
 
     def post(self, request):
+        """Deletes a provider"""
         provider_id = request.POST.get("provider_id")
         provider = get_object_or_404(Provider, pk=int(provider_id))
         provider.delete()
@@ -277,6 +300,8 @@ class PetRepositoryView(View):
     """
 
     def get(self, request):
+        """gets a pets/repo"""
+
         pets = Pet.objects.all()
         return render(request, "pets/repository.html", {"pets": pets})
 
@@ -288,6 +313,8 @@ class PetFormView(View):
     template_name = "pets/form.html"
 
     def get(self, request, id=None):
+        """gets a pets/form"""
+
         pet = None
         breeds = Breed.objects.all()
         if id is not None:
@@ -295,6 +322,7 @@ class PetFormView(View):
         return render(request, self.template_name, {"pet": pet, "breeds": breeds})
 
     def post(self, request, id=None):
+        """saves a pet"""
         pet_id = request.POST.get("id", "")
         errors = {}
         saved = True
@@ -315,6 +343,7 @@ class PetDeleteView(View):
     """
 
     def post(self, request):
+        """Deletes a pet"""
         pet_id = request.POST.get("pet_id")
         pet = get_object_or_404(Pet, pk=int(pet_id))
         pet.delete()
