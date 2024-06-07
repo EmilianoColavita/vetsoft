@@ -9,7 +9,7 @@ class Client(models.Model):
     Representa a un cliente con sus datos básicos.
     """
     name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
+    phone = models.BigIntegerField()
     email = models.EmailField()
     address = models.CharField(max_length=100, blank=True)
 
@@ -29,6 +29,8 @@ class Client(models.Model):
             errors["phone"] = "Por favor ingrese un teléfono"
         elif not phone.startswith('54'):
             errors["phone"] = "El teléfono debe comenzar con '54'"
+        elif not phone.isdigit():
+            errors["phone"] = "El teléfono debe ser un numero"
 
         if email == "":
             errors["email"] = "Por favor ingrese un email"
@@ -49,7 +51,7 @@ class Client(models.Model):
 
         Client.objects.create(
             name=client_data.get("name"),
-            phone=client_data.get("phone"),
+            phone=int(client_data.get("phone")),
             email=client_data.get("email"),
             address=client_data.get("address"),
         )
