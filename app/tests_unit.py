@@ -6,6 +6,20 @@ from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
 
+
+    def test_cant_create_user_with_not_valid_name(self):
+            saved, errors = Client.save_client(
+                {
+                    # Invalid name
+                    "name": "123323",
+                    "phone": "54123321",
+                    "address": "13 y 44",
+                    "email": "brujita75@vetsoft.com",
+                }
+            )
+            self.assertFalse(saved)
+            self.assertIn('name', errors)
+
     def test_cant_create_user_with_not_numeric_phone(self):
         saved, errors = Client.save_client(
             {
@@ -16,6 +30,7 @@ class ClientModelTest(TestCase):
             }
         )
         self.assertFalse(saved)
+        self.assertIn('phone', errors)
 
     def test_can_create_and_get_client(self):
         saved, errors = Client.save_client(
