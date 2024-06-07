@@ -52,8 +52,10 @@ class Client(models.Model):
         elif not email.endswith("@vetsoft.com"):
             errors["email"] = 'El email debe finalizar con "@vetsoft.com"'
 
-        if city == "":
+        if not city:
             errors["city"] = "Por favor seleccione una ciudad"
+        elif not City.objects.filter(id=city).exists():
+            errors["city"] = "Esa ciudad no existe"
 
         return errors
 
@@ -79,13 +81,14 @@ class Client(models.Model):
         self.name = client_data.get("name", "") or self.name
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
-        self.city = City.objects.get(pk=client_data.get("city")) or self.city
+        if City.objects.filter(id=client_data.get("city")).exists():
+            self.city = City.objects.get(pk=client_data.get("city"))
 
         errors = self.validate_client({
             "name": self.name,
             "phone": self.phone,
             "email": self.email,
-            "city": self.city,
+            "city": self.city.id,
         })
 
         if len(errors.keys()) > 0:

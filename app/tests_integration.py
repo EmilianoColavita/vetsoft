@@ -85,11 +85,11 @@ class ClientsTest(TestCase):
         self.assertContains(response, "Por favor ingrese un email valido")
 
     def test_edit_user_with_valid_data(self):
-        City.objects.create(name='Berisso')
+        city = City.objects.create(name='Berisso')
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             phone=54221555232,
-            city=1,
+            city=city,
             email="brujita75@vetsoft.com",
         )
 
@@ -107,7 +107,7 @@ class ClientsTest(TestCase):
         editedClient = Client.objects.get(pk=client.id)
         self.assertEqual(editedClient.name, "Guido Carrillo")
         self.assertEqual(editedClient.phone, client.phone)
-        self.assertEqual(editedClient.city, City.objects.get(pk=client.city))
+        self.assertEqual(editedClient.city.id, city.id)
         self.assertEqual(editedClient.email, client.email)
 
 

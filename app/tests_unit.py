@@ -38,7 +38,7 @@ class ClientModelTest(TestCase):
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
-                "city": 1,
+                "city": city.id,
                 "email": "brujita75@vetsoft.com",
             }
         )
@@ -54,12 +54,12 @@ class ClientModelTest(TestCase):
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
     def test_can_update_client(self):
-        City.objects.create(name='Berisso')
+        city = City.objects.create(name='Berisso')
         saved, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
-                "city": 1,
+                "city": city.id,
                 "email": "brujita75@vetsoft.com",
             }
         )
@@ -68,19 +68,23 @@ class ClientModelTest(TestCase):
         client = Client.objects.get(pk=1)
         self.assertEqual(client.phone, 54221555232)
 
-        client.update_client({"phone": "54221555233"})
+        client.update_client(
+            {
+                "phone": "54221555233"
+            }
+        )
 
         client_updated = Client.objects.get(pk=1)
 
         self.assertEqual(client_updated.phone, 54221555233)
 
     def test_phone_must_start_with_54(self):
-        City.objects.create(name='Berisso')
+        city = City.objects.create(name='Berisso')
         success, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "44221555232",  # Número de teléfono que no comienza con '54'
-                "city": 1,
+                "city": city.id,
                 "email": "brujita75@hotmail.com",
             }
         )
