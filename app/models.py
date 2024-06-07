@@ -1,4 +1,5 @@
 from datetime import date, datetime
+import re
 
 from django.db import models
 
@@ -22,15 +23,13 @@ class Client(models.Model):
         phone = data.get("phone", "")
         email = data.get("email", "")
 
-        if name == "":
+        if not name:
             errors["name"] = "Por favor ingrese un nombre"
 
-        if phone == "":
+        if not phone:
             errors["phone"] = "Por favor ingrese un teléfono"
-        elif not phone.startswith('54'):
-            errors["phone"] = "El teléfono debe comenzar con '54'"
-        elif not phone.isdigit():
-            errors["phone"] = "El teléfono debe ser un numero"
+        elif not re.match(r'^54\d+$', phone):
+            errors["phone"] = "El teléfono debe comenzar con '54' y ser un número"
 
         if email == "":
             errors["email"] = "Por favor ingrese un email"
