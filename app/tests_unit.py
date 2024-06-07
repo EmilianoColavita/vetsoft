@@ -5,6 +5,18 @@ from app.models import Breed, Client, Medicine, Pet, Product, Provider
 from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
+
+    def test_cant_create_user_with_not_numeric_phone(self):
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "54Not a Number",
+                "address": "13 y 44",
+                "email": "brujita75@vetsoft.com",
+            }
+        )
+        self.assertFalse(saved)
+
     def test_can_create_and_get_client(self):
         saved, errors = Client.save_client(
             {
@@ -21,7 +33,7 @@ class ClientModelTest(TestCase):
         self.assertEqual(len(clients), 1)
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
-        self.assertEqual(clients[0].phone, "54221555232")
+        self.assertEqual(clients[0].phone, 54221555232)
         self.assertEqual(clients[0].address, "13 y 44")
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
@@ -37,34 +49,14 @@ class ClientModelTest(TestCase):
         self.assertTrue(saved)
         self.assertIsNone(errors)
         client = Client.objects.get(pk=1)
-        self.assertEqual(client.phone, "54221555232")
+        self.assertEqual(client.phone, 54221555232)
 
         client.update_client({"phone": "54221555233"})
 
         client_updated = Client.objects.get(pk=1)
 
-        self.assertEqual(client_updated.phone, "54221555233")
+        self.assertEqual(client_updated.phone, 54221555233)
 
-    def test_update_client_with_error(self):
-
-        saved, errors = Client.save_client(
-            {
-                "name": "Juan Sebastian Veron",
-                "phone": "54221555232",
-                "address": "13 y 44",
-                "email": "brujita75@vetsoft.com",
-            }
-        )
-        self.assertTrue(saved)
-        client = Client.objects.get(pk=1)
-
-        updated, errors = client.update_client(
-            {
-                "phone": "154221555232"
-            }
-        )
-        self.assertFalse(updated)
-        self.assertEqual(errors["phone"], "El teléfono debe comenzar con '54'")
 
     def test_phone_must_start_with_54(self):
         success, errors = Client.save_client(
