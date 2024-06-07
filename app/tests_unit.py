@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase, Client as DjangoClient
 from django.urls import reverse
-from app.models import Breed, Client, Medicine, Pet, Product, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Provider
 from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
@@ -32,11 +32,12 @@ class ClientModelTest(TestCase):
         self.assertIn('phone', errors)
 
     def test_can_create_and_get_client(self):
+        City.objects.create(name='Berisso')
         saved, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
-                "address": "13 y 44",
+                "city": 1,
                 "email": "brujita75@vetsoft.com",
             }
         )
@@ -48,15 +49,16 @@ class ClientModelTest(TestCase):
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
         self.assertEqual(clients[0].phone, 54221555232)
-        self.assertEqual(clients[0].address, "13 y 44")
+        self.assertEqual(clients[0].city, 1)
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
     def test_can_update_client(self):
+        City.objects.create(name='Berisso')
         saved, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
-                "address": "13 y 44",
+                "city": 1,
                 "email": "brujita75@vetsoft.com",
             }
         )
@@ -71,20 +73,19 @@ class ClientModelTest(TestCase):
 
         self.assertEqual(client_updated.phone, 54221555233)
 
-
     def test_phone_must_start_with_54(self):
+        City.objects.create(name='Berisso')
         success, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
                 "phone": "44221555232",  # Número de teléfono que no comienza con '54'
-                "address": "13 y 44",
+                "city": 1,
                 "email": "brujita75@hotmail.com",
             }
         )
 
         self.assertFalse(success)
         self.assertIn("phone", errors)
-
 
 class ClientViewsTest(TestCase):
     def setUp(self):
@@ -281,3 +282,15 @@ class PetModelTest(TestCase):
         })
         self.assertEqual(result, True)
         self.assertIsNone(errors)
+
+class CityModelTest(TestCase):
+    def test_can_create_city(self):
+        valid_names = ["Berisso", "Ensenada", "La Plata"]
+        for name in valid_names:
+            City.objects.create(name=name)
+
+        cities = City.objects.all()
+        self.assertEqual(len(cities), len(valid_names))
+
+        for i, city in enumerate(cities):
+            self.assertEqual(city.name, valid_names[i])

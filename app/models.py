@@ -4,6 +4,17 @@ from datetime import date, datetime
 from django.db import models
 
 
+############################################## CITY ################################################
+class City(models.Model):
+    """
+    Representa la lista de ciudades
+    """
+    name = models.CharField(max_length=10, unique=True)
+    def _str_(self):
+        return self.name
+
+####################################################################################################
+
 ############################################## CLIENT ##############################################
 class Client(models.Model):
     """
@@ -12,7 +23,7 @@ class Client(models.Model):
     name = models.CharField(max_length=100)
     phone = models.BigIntegerField()
     email = models.EmailField()
-    address = models.CharField(max_length=100, blank=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     @classmethod
     def validate_client(cls, data):
@@ -22,6 +33,7 @@ class Client(models.Model):
         name = data.get("name", "")
         phone = data.get("phone", "")
         email = data.get("email", "")
+        city = data.get("city", "")
 
         if not name:
             errors["name"] = "Por favor ingrese un nombre"
@@ -39,6 +51,9 @@ class Client(models.Model):
             errors["email"] = "Por favor ingrese un email valido"
         elif not email.endswith("@vetsoft.com"):
             errors["email"] = 'El email debe finalizar con "@vetsoft.com"'
+        
+        if city == "":
+            errors["city"] = "Por favor seleccione una ciudad"
 
         return errors
 
@@ -54,7 +69,7 @@ class Client(models.Model):
             name=client_data.get("name"),
             phone=int(client_data.get("phone")),
             email=client_data.get("email"),
-            address=client_data.get("address"),
+            city=City.objects.get(pk=client_data.get("city")),
         )
 
         return True, None
@@ -64,13 +79,13 @@ class Client(models.Model):
         self.name = client_data.get("name", "") or self.name
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
-        self.address = client_data.get("address", "") or self.address
+        self.city = City.objects.get(pk=client_data.get("city")) or self.city
 
         errors = self.validate_client({
             "name": self.name,
             "phone": self.phone,
             "email": self.email,
-            "address": self.address,
+            "city": self.city,
         })
 
         if len(errors.keys()) > 0:

@@ -65,19 +65,21 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label">Dirección</label>
-                    <input type="text"
-                        id="address"
-                        name="address"
-                        value="{{ client.address }}"
-                        class="form-control {% if errors.address %}is-invalid{% endif %}" />
-                    {% if errors.address %}
+                <div>
+                    <label for="city" class="form-label">Ciudad</label>
+                        <select id="city" name="city" class="form-select" required>
+                            <option value="">Seleccione una ciudad</option>
+                            {% for city in cities %}
+                                <option value="{{ city.id }}" {% if city.id == client.city.id %}selected{% endif %}>
+                                    {{ city.name }}
+                                </option>
+                             {% endfor %}
+                        </select>
+
+                    {% if errors.city %}
                         <div class="invalid-feedback">
-                            {{ errors.address }}
+                            {{ errors.city }}
                         </div>
-
-
                     {% endif %}
                 </div>
 

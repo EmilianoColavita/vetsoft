@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import View
 from django.views.generic import TemplateView
 
-from .models import Breed, Client, Medicine, Pet, Product, Provider, Vet
+from .models import Breed, City, Client, Medicine, Pet, Product, Provider, Vet
 
 
 def home(request):
