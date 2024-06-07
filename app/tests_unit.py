@@ -6,7 +6,6 @@ from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
 
-
     def test_cant_create_user_with_not_valid_name(self):
             saved, errors = Client.save_client(
                 {
