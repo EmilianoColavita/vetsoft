@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="col-lg-6 offset-lg-3">
-            <form class="vstack gap-3 {% if errors %}was-validated{% endif %}"
+            <form class="vstack gap-2 {% if errors %}was-validated{% endif %}"
                 aria-label="Formulario de creacion de cliente"
                 method="POST"
                 action="{% url 'clients_form' %}"
@@ -20,13 +20,13 @@
 
                 <input type="hidden" value="{{ client.id }}" name="id" />
 
-                <div>
+                <div class="mb-3">
                     <label for="name" class="form-label">Nombre</label>
                     <input type="text"
                         id="name"
                         name="name"
-                        value="{{client.name}}"
-                        class="form-control"
+                        value="{{ client.name }}"
+                        class="form-control {% if errors.name %}is-invalid{% endif %}"
                         required/>
 
                     {% if errors.name %}
@@ -35,13 +35,13 @@
                         </div>
                     {% endif %}
                 </div>
-                <div>
+                <div class="mb-3">
                     <label for="phone" class="form-label">Teléfono</label>
                     <input type="text"
                         id="phone"
                         name="phone"
-                        class="form-control"
-                        value="{{client.phone}}"
+                        class="form-control {% if errors.phone %}is-invalid{% endif %}"
+                        value="{{ client.phone }}"
                         required/>
 
                     {% if errors.phone %}
@@ -50,12 +50,12 @@
                         </div>
                     {% endif %}
                 </div>
-                <div>
+                <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email"
                         id="email"
                         name="email"
-                        class="form-control"
+                        class="form-control {% if errors.email %}is-invalid{% endif %}"
                         value="{{ client.email }}"
                         required/>
 
@@ -65,17 +65,20 @@
                         </div>
                     {% endif %}
                 </div>
-                <div>
+                <div class="mb-3">
                     <label for="address" class="form-label">Dirección</label>
                     <input type="text"
                         id="address"
                         name="address"
-                        value="{{client.address}}"
-                        class="form-control" />
+                        value="{{ client.address }}"
+                        class="form-control {% if errors.address %}is-invalid{% endif %}" />
+                    {% if errors.address %}
+                        <div class="invalid-feedback">
+                            {{ errors.address }}
+                        </div>
 
-                    <div class="invalid-feedback">
-                        La dirrección es opcional
-                    </div>
+
+                    {% endif %}
                 </div>
 
                 <button class="btn btn-primary">Guardar</button>
