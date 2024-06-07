@@ -43,9 +43,10 @@ class ClientFormView(View):
     def get(self, request, id=None):
         """gets a client/form"""
         client = None
+        cities = City.objects.all()
         if id is not None:
             client = get_object_or_404(Client, pk=id)
-        return render(request, self.template_name, {"client": client})
+        return render(request, self.template_name, {"client": client, "cities": cities})
 
     def post(self, request, id=None):
         """saves a client"""
