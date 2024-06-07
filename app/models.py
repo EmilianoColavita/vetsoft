@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 
 from django.db import models
@@ -9,7 +10,7 @@ class Client(models.Model):
     Representa a un cliente con sus datos básicos.
     """
     name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
+    phone = models.BigIntegerField()
     email = models.EmailField()
     address = models.CharField(max_length=100, blank=True)
 
@@ -22,13 +23,15 @@ class Client(models.Model):
         phone = data.get("phone", "")
         email = data.get("email", "")
 
-        if name == "":
+        if not name:
             errors["name"] = "Por favor ingrese un nombre"
+        elif re.fullmatch(r'^[A-Za-zÁÉÍÓÚáéíóúÜü_ ]*$', name) is None:
+            errors["name"] = "Por favor ingrese solo caracteres permitidos"
 
-        if phone == "":
+        if not phone:
             errors["phone"] = "Por favor ingrese un teléfono"
-        elif not phone.startswith('54'):
-            errors["phone"] = "El teléfono debe comenzar con '54'"
+        elif not re.match(r'^54\d+$', str(phone)):
+            errors["phone"] = "El teléfono debe comenzar con '54' y ser un número"
 
         if email == "":
             errors["email"] = "Por favor ingrese un email"
@@ -49,7 +52,7 @@ class Client(models.Model):
 
         Client.objects.create(
             name=client_data.get("name"),
-            phone=client_data.get("phone"),
+            phone=int(client_data.get("phone")),
             email=client_data.get("email"),
             address=client_data.get("address"),
         )
@@ -72,6 +75,9 @@ class Client(models.Model):
 
         if len(errors.keys()) > 0:
             return False, errors
+
+        # cast
+        self.phone = int(self.phone)
 
         self.save()
         return True, None

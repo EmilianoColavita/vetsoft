@@ -26,7 +26,7 @@
                         id="name"
                         name="name"
                         value="{{provider.name}}"
-                        class="form-control"
+                        class="form-control {% if errors.name %}is-invalid{% endif %}z"
                         required/>
 
                     {% if errors.name %}
@@ -40,7 +40,7 @@
                     <input type="text"
                         id="phone"
                         name="phone"
-                        class="form-control"
+                        class="form-control {% if errors.phone %}is-invalid{% endif %}"
                         value="{{provider.phone}}"
                         required/>
 
@@ -55,7 +55,7 @@
                     <input type="email"
                         id="email"
                         name="email"
-                        class="form-control"
+                        class="form-control {% if errors.email %}is-invalid{% endif %}"
                         value="{{ provider.email }}"
                         required/>
 
@@ -71,9 +71,9 @@
                         id="address"
                         name="address"
                         value="{{ provider.address }}"
-                        class="form-control"
+                        class="form-control {% if errors.address %}is-invalid{% endif %}"
                         required/>
-                
+
                     {% if errors.address %}
                         <div class="invalid-feedback">
                             {{ errors.address }}
@@ -86,15 +86,15 @@
                         id="floor_apartament"
                         name="floor_apartament"
                         value="{{ provider.floor_apartament }}"
-                        class="form-control"
+                        class="form-control {% if errors.floor_apartament %}is-invalid{% endif %}"
                         required/>
-                
+
                     {% if errors.floor_apartament %}
                         <div class="invalid-feedback">
                             {{ errors.floor_apartament }}
                         </div>
                     {% endif %}
-                </div>                               
+                </div>
 
                 <button class="btn btn-primary">Guardar</button>
             </form>
