@@ -28,7 +28,7 @@ class Client(models.Model):
 
         if not phone:
             errors["phone"] = "Por favor ingrese un teléfono"
-        elif not re.match(r'^54\d+$', phone):
+        elif not re.match(r'^54\d+$', str(phone)):
             errors["phone"] = "El teléfono debe comenzar con '54' y ser un número"
 
         if email == "":
@@ -73,6 +73,9 @@ class Client(models.Model):
 
         if len(errors.keys()) > 0:
             return False, errors
+
+        # cast
+        self.phone = int(self.phone)
 
         self.save()
         return True, None
