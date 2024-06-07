@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.shortcuts import reverse
-from app.models import Client, Medicine, Pet, Product, Vet, Provider
+from app.models import City, Client, Medicine, Pet, Product, Vet, Provider
 from datetime import date, datetime, timedelta
 
 
@@ -37,12 +37,13 @@ class ClientsTest(TestCase):
         self.assertTemplateUsed(response, "clients/form.html")
 
     def test_can_create_client(self):
+        City.objects.create(name='Berisso')
         response = self.client.post(
             reverse("clients_form"),
             data={
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
-                "address": "13 y 44",
+                "city": 1,
                 "email": "brujita75@vetsoft.com",
             },
         )
@@ -51,7 +52,7 @@ class ClientsTest(TestCase):
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
         self.assertEqual(clients[0].phone, 54221555232)
-        self.assertEqual(clients[0].address, "13 y 44")
+        self.assertEqual(clients[0].city, City.objects.get(pk=1))
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
         self.assertRedirects(response, reverse("clients_repo"))
@@ -84,10 +85,11 @@ class ClientsTest(TestCase):
         self.assertContains(response, "Por favor ingrese un email valido")
 
     def test_edit_user_with_valid_data(self):
+        City.objects.create(name='Berisso')
         client = Client.objects.create(
             name="Juan Sebastián Veron",
-            address="13 y 44",
             phone=54221555232,
+            city=1,
             email="brujita75@vetsoft.com",
         )
 
@@ -105,7 +107,7 @@ class ClientsTest(TestCase):
         editedClient = Client.objects.get(pk=client.id)
         self.assertEqual(editedClient.name, "Guido Carrillo")
         self.assertEqual(editedClient.phone, client.phone)
-        self.assertEqual(editedClient.address, client.address)
+        self.assertEqual(editedClient.city, City.objects.get(pk=client.city))
         self.assertEqual(editedClient.email, client.email)
 
 

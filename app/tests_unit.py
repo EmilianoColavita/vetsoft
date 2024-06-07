@@ -32,7 +32,8 @@ class ClientModelTest(TestCase):
         self.assertIn('phone', errors)
 
     def test_can_create_and_get_client(self):
-        City.objects.create(name='Berisso')
+        city = City.objects.create(name='Berisso')
+
         saved, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
@@ -49,7 +50,7 @@ class ClientModelTest(TestCase):
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
         self.assertEqual(clients[0].phone, 54221555232)
-        self.assertEqual(clients[0].city, 1)
+        self.assertEqual(clients[0].city.id, city.id)
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
     def test_can_update_client(self):

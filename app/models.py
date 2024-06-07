@@ -23,7 +23,7 @@ class Client(models.Model):
     name = models.CharField(max_length=100)
     phone = models.BigIntegerField()
     email = models.EmailField()
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, default=0)
 
     @classmethod
     def validate_client(cls, data):
@@ -51,7 +51,7 @@ class Client(models.Model):
             errors["email"] = "Por favor ingrese un email valido"
         elif not email.endswith("@vetsoft.com"):
             errors["email"] = 'El email debe finalizar con "@vetsoft.com"'
-        
+
         if city == "":
             errors["city"] = "Por favor seleccione una ciudad"
 
