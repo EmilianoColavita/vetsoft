@@ -52,6 +52,9 @@ class Client(models.Model):
         elif not email.endswith("@vetsoft.com"):
             errors["email"] = 'El email debe finalizar con "@vetsoft.com"'
 
+        if city == "":
+            errors["city"] = "Por favor seleccione una ciudad"
+
         if not city:
             errors["city"] = "Por favor seleccione una ciudad"
         elif not City.objects.filter(id=city).exists():
