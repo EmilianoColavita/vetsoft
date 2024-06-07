@@ -25,6 +25,8 @@ class Client(models.Model):
 
         if not name:
             errors["name"] = "Por favor ingrese un nombre"
+        elif re.fullmatch(r'^[A-Za-zÁÉÍÓÚáéíóúÜü_ ]*$', name) is None:
+            errors["name"] = "Por favor ingrese solo caracteres permitidos"
 
         if not phone:
             errors["phone"] = "Por favor ingrese un teléfono"
