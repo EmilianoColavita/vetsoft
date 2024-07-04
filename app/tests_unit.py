@@ -1,6 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase, Client as DjangoClient
 from django.urls import reverse
+from datetime import date, timedelta
 from app.models import Breed, City, Client, Medicine, Pet, Product, Provider
 from app.views import ClientRepositoryView, ProviderFormView
 
@@ -275,7 +276,7 @@ class PetModelTest(TestCase):
             "birthday": "2024-05-20",
         })
         self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'weight': 'El peso debe ser mayor que 0'})
+        self.assertDictEqual(errors, {'weight': ['El peso debe ser mayor que 0']})
 
     def test_valid_weight(self):
         Breed.objects.create(name='B')
@@ -284,6 +285,30 @@ class PetModelTest(TestCase):
             "breed": 1,
             "weight": 5.0,
             "birthday": "2024-05-20",
+        })
+        self.assertEqual(result, True)
+        self.assertIsNone(errors)
+    
+    def test_invalid_birthday_future_date(self):
+        Breed.objects.create(name='C')
+        future_date = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+        result, errors = Pet.save_pet({
+            "name": "Mascota Futuro",
+            "breed": 1,
+            "weight": 5.0,
+            "birthday": future_date,
+        })
+        self.assertEqual(result, False)
+        self.assertDictEqual(errors, {'birthday': ['La fecha de nacimiento debe ser anterior a la fecha actual.']})
+
+    def test_valid_birthday(self):
+        Breed.objects.create(name='D')
+        valid_date = (date.today() - timedelta(days=10)).strftime("%Y-%m-%d")
+        result, errors = Pet.save_pet({
+            "name": "Mascota Valida",
+            "breed": 1,
+            "weight": 5.0,
+            "birthday": valid_date,
         })
         self.assertEqual(result, True)
         self.assertIsNone(errors)
