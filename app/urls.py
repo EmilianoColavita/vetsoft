@@ -14,7 +14,7 @@ urlpatterns = [
 
     #PRODUCTOS
     path("productos/", views.ProductRepositoryView.as_view(), name="products_repo"),
-    path("productos/nuevo/", views.ProductFormView.as_view(), name="products_create"),
+    path("productos/nuevo/", views.ProductFormView.as_view(), name="products_form"),
     path("productos/editar/<int:id>/", views.ProductFormView.as_view(), name="products_edit"),
     path("productos/eliminar/", views.ProductDeleteView.as_view(), name="products_delete"),
 
@@ -26,7 +26,7 @@ urlpatterns = [
 
     #MEDICAMENTOS
     path("medicamentos/", views.MedicineRepositoryView.as_view(), name="medicines_repo"),
-    path("medicamentos/nuevo/", views.MedicineFormView.as_view(), name="medicines_create"),
+    path("medicamentos/nuevo/", views.MedicineFormView.as_view(), name="medicines_form"),
     path("medicamentos/editar/<int:id>/", views.MedicineFormView.as_view(), name="medicines_edit"),
     path("medicamentos/eliminar/", views.MedicineDeleteView.as_view(), name="medicines_delete"),
 

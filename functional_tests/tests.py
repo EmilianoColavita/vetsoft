@@ -481,7 +481,7 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
 
 class MedicineTest(PlaywrightTestCase):
     def test_should_show_message_if_table_is_empty(self):
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
         expect(self.page.get_by_text("No existen medicinas")).to_be_visible()
 
     def test_should_show_medicines_data(self):
@@ -497,7 +497,7 @@ class MedicineTest(PlaywrightTestCase):
             dose=7.5,
         )
 
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
         expect(self.page.get_by_text("No existen medicinas")).not_to_be_visible()
 
@@ -510,12 +510,12 @@ class MedicineTest(PlaywrightTestCase):
         expect(self.page.get_by_text("7.5")).to_be_visible()
 
     def test_should_show_add_medicine_action(self):
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
         add_medicine_action = self.page.get_by_role(
             "link", name="Nueva medicina", exact=False
         )
-        expect(add_medicine_action).to_have_attribute("href", reverse("medicine_form"))
+        expect(add_medicine_action).to_have_attribute("href", reverse("medicines_form"))
 
     def test_should_show_medicine_edit_action(self):
         medicine = Medicine.objects.create(
@@ -524,11 +524,11 @@ class MedicineTest(PlaywrightTestCase):
             dose=5.0,
         )
 
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("medicine_edit", kwargs={"id": medicine.id})
+            "href", reverse("medicines_edit", kwargs={"id": medicine.id})
         )
 
     def test_should_show_medicine_delete_action(self):
@@ -538,7 +538,7 @@ class MedicineTest(PlaywrightTestCase):
             dose=5.0,
         )
 
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
         edit_form = self.page.get_by_role(
             "form", name="Formulario de eliminación de medicina"
@@ -558,7 +558,7 @@ class MedicineTest(PlaywrightTestCase):
             dose=5.0,
         )
 
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_repo')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
         expect(self.page.get_by_text("Aspirina")).to_be_visible()
 
@@ -575,7 +575,7 @@ class MedicineTest(PlaywrightTestCase):
 
     #! no anda
     def test_should_be_able_to_create_a_new_medicine(self):
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_form')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
 
         expect(self.page.get_by_role("form")).to_be_visible()
 
@@ -590,7 +590,7 @@ class MedicineTest(PlaywrightTestCase):
         expect(self.page.get_by_text("7.5")).to_be_visible()
 
     def test_should_view_errors_if_form_is_invalid(self):
-        self.page.goto(f"{self.live_server_url}{reverse('medicine_form')}")
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
 
         expect(self.page.get_by_role("form")).to_be_visible()
 
@@ -635,7 +635,7 @@ class MedicineTest(PlaywrightTestCase):
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("medicine_edit", kwargs={"id": medicine.id})
+            "href", reverse("medicines_edit", kwargs={"id": medicine.id})
         )
 
 
@@ -644,7 +644,7 @@ class PetTests(PlaywrightTestCase):
     def test_should_validate_pet_date_of_birth_less_than_today(self):
         today_date = date.today().strftime("%Y-%m-%d")
 
-        self.page.goto(f"{self.live_server_url}{reverse('pet_create')}")
+        self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
 
         expect(self.page.get_by_role("form")).to_be_visible()
 
