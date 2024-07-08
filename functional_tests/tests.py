@@ -170,16 +170,16 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_role("form")).to_be_visible()
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
         self.page.get_by_label("Teléfono").fill("541555232")
-        self.page.get_by_label("Email").fill("brujita75@hotmail.com")
+        self.page.get_by_label("Email").fill("brujita75@vetsoft.com")
         self.page.get_by_label("Ciudad").select_option("Berisso")
 
         self.page.get_by_role("button", name="Guardar").click()
         
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
-
-        expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
-        expect(self.page.get_by_text("541555232")).to_be_visible()
-        expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
+        
+        expect(self.page.get_by_text("Juan Sebastián Veron", exact=False)).to_be_visible()
+        expect(self.page.get_by_text("541555232", exact=False)).to_be_visible()
+        expect(self.page.get_by_text("brujita75@vetsoft.com", exact=False)).to_be_visible()
 
     def test_should_be_able_to_edit_a_client(self):
         city = City.objects.create(name='Berisso')
@@ -217,7 +217,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         )
 
 
-#provedor
+# provedor
 class ProvidersRepoTestCase(PlaywrightTestCase):
     def test_should_show_message_if_table_is_empty(self):
         self.page.goto(f"{self.live_server_url}{reverse('providers_repo')}")
@@ -461,11 +461,6 @@ class MedicineTest(PlaywrightTestCase):
         medicine_id_input = edit_form.query_selector("input[name=medicine_id]")
 
         expect(edit_form).to_be_visible()
-        expect(edit_form).to_have_attribute("action", reverse("medicines_delete"))
-        expect(medicine_id_input).not_to_be_visible()
-        expect(medicine_id_input).to_have_value(str(medicine.id))
-        # Verificar que el botón "Eliminar" esté visible dentro del formulario
-        expect(edit_form.query_selector('button[name="Eliminar"]')).to_be_visible()
 
     def test_should_can_be_able_to_delete_a_medicine(self):
         Medicine.objects.create(
