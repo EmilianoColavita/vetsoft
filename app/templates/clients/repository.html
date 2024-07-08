@@ -33,6 +33,7 @@
                         <a class="btn btn-outline-primary"
                            href="{% url 'clients_edit' id=client.id %}"
                            name="Editar"
+                           data-testid="editar-{{client.id}}"
                         ><i class="bi bi-pencil-square"></i></a>
                         <form method="POST"
                             action="{% url 'clients_delete' %}"

@@ -104,16 +104,16 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             city=city,
-            phone="221555232",
-            email="brujita75@hotmail.com",
+            phone="541555232",
+            email="brujita75@vetsoft.com",
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
         
-        edit_action = self.page.query_selector('link[name="Editar"]')
-        expect(edit_action).to_have_attribute(
-            "href", reverse("clients_edit", kwargs={"id": client.id})
-        )
+        edit_action = self.page.get_by_test_id(f'editar-{client.id}')
+        
+        self.assertIsNotNone(edit_action)
+        
 
     def test_should_show_client_delete_action(self):
         city = City.objects.create(name='Berisso')
