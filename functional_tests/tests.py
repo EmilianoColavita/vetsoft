@@ -169,7 +169,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_role("form")).to_be_visible()
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
-        self.page.get_by_label("Teléfono").fill("221555232")
+        self.page.get_by_label("Teléfono").fill("541555232")
         self.page.get_by_label("Email").fill("brujita75@hotmail.com")
         self.page.get_by_label("Ciudad").select_option("Berisso")
 
@@ -178,7 +178,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
-        expect(self.page.get_by_text("221555232")).to_be_visible()
+        expect(self.page.get_by_text("541555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
 
     def test_should_be_able_to_edit_a_client(self):
