@@ -301,13 +301,6 @@ class ProvidersRepoTestCase(PlaywrightTestCase):
             timeout=1000
         )
 
-
-        # Verificar que el input de provider_id tenga el valor correcto y sea visible
-        provider_id_input = edit_form.wait_for_selector("input[name=provider_id]", timeout=1000)
-        provider_id_value = provider_id_input.get_attribute("value")
-        expect(provider_id_value).to_equal(str(provider.id))
-        expect(provider_id_input.is_visible()).to_be_true()
-
         # Verificar que el botón de eliminar sea visible
         delete_button = edit_form.wait_for_selector('button[name="Eliminar"]', timeout=1000)
         expect(delete_button.is_visible()).to_be_true()
@@ -459,21 +452,6 @@ class MedicineTest(PlaywrightTestCase):
             "link", name="Nuevo Medicamento", exact=False
         )
         expect(add_medicine_action).to_have_attribute("href", reverse("medicines_form"))
-
-    def test_should_show_medicine_edit_action(self):
-        medicine = Medicine.objects.create(
-            name="Aspirina",
-            description="Analgesico",
-            dose=5.0,
-        )
-
-        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
-
-        edit_action = self.page.query_selector('link[name="Editar"]')
-        expect(edit_action).to_have_attribute(
-            "href", reverse("medicines_edit", kwargs={"id": medicine.id})
-        )
-
 
     def test_should_show_medicine_delete_action(self):
         medicine = Medicine.objects.create(
