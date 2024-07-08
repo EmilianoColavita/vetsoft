@@ -32,6 +32,7 @@
                     <td class="d-flex gap-2">
                         <a class="btn btn-outline-primary"
                            href="{% url 'clients_edit' id=client.id %}"
+                           name="Editar"
                         ><i class="bi bi-pencil-square"></i></a>
                         <form method="POST"
                             action="{% url 'clients_delete' %}"

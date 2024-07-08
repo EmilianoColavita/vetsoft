@@ -33,7 +33,9 @@
                     ><i class="bi bi-pencil-square"></i></a>
                     <form method="POST"
                           action="{% url 'medicines_delete' %}"
-                          aria-label="Formulario de eliminación de medicamento">
+                          aria-label="Formulario de eliminación de medicamento"
+                          name="Formulario de eliminación de medicamento"
+                          >
                         {% csrf_token %}
                         <input type="hidden" name="medicine_id" value="{{ medicine.id }}" />
                         <button class="btn btn-outline-danger" name="Eliminar"><i class="bi bi-trash"></i></button>
