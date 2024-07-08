@@ -29,13 +29,14 @@
                 <td class="d-flex gap-2">
                     <a class="btn btn-outline-primary"
                        href="{% url 'medicines_edit' id=medicine.id %}"
+                       name="Editar"
                     ><i class="bi bi-pencil-square"></i></a>
                     <form method="POST"
                           action="{% url 'medicines_delete' %}"
                           aria-label="Formulario de eliminación de medicamento">
                         {% csrf_token %}
                         <input type="hidden" name="medicine_id" value="{{ medicine.id }}" />
-                        <button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-danger" name="Eliminar"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>
             </tr>
