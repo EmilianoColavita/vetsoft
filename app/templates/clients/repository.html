@@ -41,7 +41,7 @@
                             {% csrf_token %}
 
                             <input type="hidden" name="client_id" value="{{ client.id }}" />
-                            <button class="btn btn-outline-danger" name="Eliminar"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-outline-danger" name="Eliminar" data-testid="borrar-{{client.id}}"><i class="bi bi-trash"></i></button>
                         </form>
                     </td>
             </tr>

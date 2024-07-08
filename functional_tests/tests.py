@@ -120,17 +120,15 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             city=city,
-            phone="221555232",
-            email="brujita75@hotmail.com",
+            phone="541555232",
+            email="brujita75@vetsoft.com",
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
 
-        edit_form = self.page.query_selector(
-            'form[name="Formulario de eliminación de cliente"]'
-        )
+        button_borrar = self.page.get_by_test_id(f'borrar-{client.id}')
         
-        self.assertTrue(edit_form.is_visible())
+        self.assertTrue(button_borrar.is_visible)
 
 
     def test_should_can_be_able_to_delete_a_client(self):
