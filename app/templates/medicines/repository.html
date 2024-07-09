@@ -5,7 +5,7 @@
     <h1 class="mb-4">Medicamentos</h1>
 
     <div class="mb-2">
-        <a href="{% url 'medicines_create' %}" class="btn btn-primary">
+        <a href="{% url 'medicines_form' %}" class="btn btn-primary">
             <i class="bi bi-plus"></i>
             Nuevo Medicamento
         </a>
@@ -29,13 +29,16 @@
                 <td class="d-flex gap-2">
                     <a class="btn btn-outline-primary"
                        href="{% url 'medicines_edit' id=medicine.id %}"
+                       name="Editar"
                     ><i class="bi bi-pencil-square"></i></a>
                     <form method="POST"
                           action="{% url 'medicines_delete' %}"
-                          aria-label="Formulario de eliminación de medicamento">
+                          aria-label="Formulario de eliminación de medicamento"
+                          name="Formulario de eliminación de medicamento"
+                          >
                         {% csrf_token %}
                         <input type="hidden" name="medicine_id" value="{{ medicine.id }}" />
-                        <button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-danger" name="Eliminar"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>
             </tr>

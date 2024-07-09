@@ -33,13 +33,15 @@
                 <td class="d-flex gap-2">
                     <a class="btn btn-outline-primary"
                        href="{% url 'providers_edit' id=provider.id %}"
+                       name="Editar"
                     ><i class="bi bi-pencil-square"></i></a>
                     <form method="POST"
                           action="{% url 'providers_delete' %}"
-                          aria-label="Formulario de eliminación de proveedor">
+                          aria-label="Formulario de eliminación de proveedor"
+                          name="Formulario de eliminación de proveedor">
                         {% csrf_token %}
                         <input type="hidden" name="provider_id" value="{{ provider.id }}" />
-                        <button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-danger" name="Eliminar"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>
             </tr>
