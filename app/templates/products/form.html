@@ -13,7 +13,7 @@
             <form class="vstack gap-3 {% if errors %}was-validated{% endif %}"
                 aria-label="Formulario de creación de producto"
                 method="POST"
-                action="{% url 'products_form' %}"
+                action="{% url 'products_create' %}"
                 novalidate>
 
                 {% csrf_token %}
