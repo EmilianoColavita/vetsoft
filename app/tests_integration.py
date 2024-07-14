@@ -2,7 +2,75 @@ from django.test import TestCase
 from django.shortcuts import reverse
 from app.models import City, Client, Medicine, Pet, Product, Vet, Provider
 from datetime import date, datetime, timedelta
+from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
+class ViewTestCase(TestCase):
+    def test_urls_are_correct(self):
+        self.assertTrue(PetFormView.template_name, 'pets/form.html')
+        self.assertTrue(VetFormView.template_name, 'vets/form.html')
+        self.assertTrue(MedicineFormView.template_name, 'medicines/form.html')
+        self.assertTrue(MedicineRepositoryView.template_name, 'medicines/repository.html')
+
+    def test_can_go_pages(self):
+        responses = []
+        # Obtener URLs y respuestas para clientes
+        r_client_repo = self.client.get(reverse('clients_repo'))
+        r_client_form = self.client.get(reverse('clients_form'))
+        responses.append(r_client_repo)
+        responses.append(r_client_form)
+
+        # Obtener URLs y respuestas para medicines
+        r_medicine_repo = self.client.get(reverse('medicines_repo'))
+        r_medicine_form = self.client.get(reverse('medicines_form'))
+        responses.append(r_medicine_repo)
+        responses.append(r_medicine_form)
+        
+        # Obtener URLs y respuestas para productos
+        r_product_repo = self.client.get(reverse('products_repo'))
+        r_product_form = self.client.get(reverse('products_form'))
+        responses.append(r_product_repo)
+        responses.append(r_product_form)
+        
+        # Obtener URLs y respuestas para vets
+        r_vet_repo = self.client.get(reverse('vets_repo'))
+        r_vet_form = self.client.get(reverse('vets_form'))
+        responses.append(r_vet_repo)
+        responses.append(r_vet_form)
+
+        # Obtener URLs y respuestas para providers
+        r_provider_repo = self.client.get(reverse('providers_repo'))
+        r_provider_form = self.client.get(reverse('providers_form'))
+        responses.append(r_provider_repo)
+        responses.append(r_provider_form)
+        
+        # Valido las responses
+        self.assertTrue(all((r.status_code < 400) for r in responses))
+    
+    def test_post_forms_urls_exists(self):
+        responses = []
+        # Obtener URLs y respuestas para clientes
+        r_client_form = self.client.post(reverse('clients_form'))
+        responses.append(r_client_form)
+
+        # Obtener URLs y respuestas para medicines
+        r_medicine_form = self.client.post(reverse('medicines_form'))
+        responses.append(r_medicine_form)
+
+        # Obtener URLs y respuestas para productos
+        r_product_form = self.client.post(reverse('products_form'))
+        responses.append(r_product_form)
+
+        # Obtener URLs y respuestas para vets
+        r_vet_form = self.client.post(reverse('vets_form'))
+        responses.append(r_vet_form)
+
+        # Obtener URLs y respuestas para providers
+        r_provider_form = self.client.post(reverse('providers_form'))
+        responses.append(r_provider_form)
+
+        # Valido las responses
+        self.assertTrue(all((r.status_code != 404) for r in responses))
+            
 
 class HomePageTest(TestCase):
     def test_use_home_template(self):
