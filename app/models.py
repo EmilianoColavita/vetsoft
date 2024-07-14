@@ -210,6 +210,11 @@ class Medicine(models.Model):
                 # restrict (1 < dosis < 10)
                 if (key == 'dose' and not (1 <= float(data.get(key)) <= 10) ):
                     errors[key] = "Las dosis deben estar entre 1 y 10"
+                    
+                # restrict name no puede contener ni "ñ" ni "espacios"
+                if (key == 'name' and not (re.fullmatch(r'^[^\sñ]+$', data.get(key)))):
+                    errors[key] = "Los nombres de medicamento no pueden contener ni ñ ni espacios"
+                    
         return errors or None
 
     def update_medicine(self, medicine_data: dict) -> tuple[bool, dict | None]:

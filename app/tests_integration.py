@@ -162,7 +162,18 @@ class ProviderIntegrationTest(TestCase):
 
         self.assertContains(response, "Por favor ingrese un email valido")
 
+class MedicinesIntegrationTest(TestCase):
+    def test_can_create_medicine_and_view_in_list(self):
+        medicine_data = {
+            'name': 'Ibuprofeno',
+            'description': 'desc',
+            'dose': 1.0
+        }
 
+        response = self.client.post(reverse('medicines_form'), data=medicine_data)
+        self.assertTrue(response.status_code < 400)
+        
+    
 ####################### PET ##############################
 
 class PetsIntegrationTest(TestCase):
