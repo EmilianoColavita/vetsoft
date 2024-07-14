@@ -250,7 +250,37 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.phone, client.phone)
         self.assertEqual(editedClient.city.id, city.id)
         self.assertEqual(editedClient.email, client.email)
+        
+        def test_update_client(self):
+            client = Client.objects.create(
+                name="Cliente Test",
+                phone="54123456789",
+                email="cliente@test.com",
+                city=self.city
+            )
 
+            # Preparar datos para actualizar
+            updated_data = {
+                "name": "Cliente Actualizado",
+                "phone": "54123456789",
+                "email": "cliente_actualizado@test.com",
+                "city": self.another_city.id  # Cambiar a otra ciudad existente
+            }
+
+            # Llamar al método de actualización
+            success, errors = client.update_client(updated_data)
+
+            # Verificar que la actualización fue exitosa
+            self.assertTrue(success)
+            self.assertIsNone(errors)
+
+            # Recuperar el cliente actualizado desde la base de datos
+            updated_client = Client.objects.get(id=client.id)
+
+            # Verificar que los datos fueron actualizados correctamente
+            self.assertEqual(updated_client.name, updated_data["name"])
+            self.assertEqual(updated_client.email, updated_data["email"])
+            self.assertEqual(updated_client.city.id, updated_data["city"])
 
 ##### PROVEDOR #####
 
@@ -314,7 +344,96 @@ class MedicinesIntegrationTest(TestCase):
         response = self.client.post(reverse('medicines_form'), data=medicine_data)
         self.assertTrue(response.status_code < 400)
         
-    
+    def test_update_medicine(self):
+            medicine = Medicine.objects.create(
+                name="MedicinaTest",
+                description="Descripción de Medicina Test",
+                dose=5.0
+            )
+
+            # Preparar datos para actualizar
+            updated_data = {
+                "name": "MedicinaActualizada",
+                "description": "Descripción Actualizada",
+                "dose": 7.5
+            }
+
+            # Llamar al método de actualización
+            success, errors = medicine.update_medicine(updated_data)
+
+            # Verificar que la actualización fue exitosa
+            self.assertTrue(success)
+            self.assertIsNone(errors)
+
+            # Recuperar la medicina actualizada desde la base de datos
+            updated_medicine = Medicine.objects.get(id=medicine.id)
+
+            # Verificar que los datos fueron actualizados correctamente
+            self.assertEqual(updated_medicine.name, updated_data["name"])
+            self.assertEqual(updated_medicine.description, updated_data["description"])
+            self.assertEqual(updated_medicine.dose, updated_data["dose"])
+
+class ProductsIntegrationTest(TestCase):
+    def test_update_product(self):
+        product = Product.objects.create(
+            name="Producto Test",
+            type="Tipo Test",
+            price=100.0
+        )
+
+        # Preparar datos para actualizar
+        updated_data = {
+            "name": "Producto Actualizado",
+            "type": "Tipo Actualizado",
+            "price": 150.0
+        }
+
+        # Llamar al método de actualización
+        success, errors = product.update_product(updated_data)
+
+        # Verificar que la actualización fue exitosa
+        self.assertTrue(success)
+        self.assertIsNone(errors)
+
+        # Recuperar el producto actualizado desde la base de datos
+        updated_product = Product.objects.get(id=product.id)
+
+        # Verificar que los datos fueron actualizados correctamente
+        self.assertEqual(updated_product.name, updated_data["name"])
+        self.assertEqual(updated_product.type, updated_data["type"])
+        self.assertEqual(updated_product.price, updated_data["price"])
+
+class VetsIntegrationTest(TestCase):
+    def test_update_vet(self):
+        vet = Vet.objects.create(
+            name="Veterinario Test",
+            phone="54123456789",
+            email="vet@test.com"
+        )
+
+        # Preparar datos para actualizar
+        updated_data = {
+            "name": "Veterinario Actualizado",
+            "phone": "54987654321",
+            "email": "vet_actualizado@test.com"
+        }
+
+        # Llamar al método de actualización
+        success, errors = vet.update_vet(updated_data)
+
+        # Verificar que la actualización fue exitosa
+        self.assertTrue(success)
+        self.assertIsNone(errors)
+
+        # Recuperar el veterinario actualizado desde la base de datos
+        updated_vet = Vet.objects.get(id=vet.id)
+
+        # Verificar que los datos fueron actualizados correctamente
+        self.assertEqual(updated_vet.name, updated_data["name"])
+        self.assertEqual(updated_vet.phone, updated_data["phone"])
+        self.assertEqual(updated_vet.email, updated_data["email"])
+
+
 ####################### PET ##############################
 
 class PetsIntegrationTest(TestCase):
