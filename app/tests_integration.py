@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.shortcuts import reverse
-from app.models import City, Client, Medicine, Pet, Product, Vet, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Vet, Provider
 from datetime import date, datetime, timedelta
 from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
@@ -70,7 +70,80 @@ class ViewTestCase(TestCase):
 
         # Valido las responses
         self.assertTrue(all((r.status_code != 404) for r in responses))
-            
+
+class DeleteViewTestCase(TestCase):
+    def setUp(self):
+        # Crear objetos de prueba
+        self.city1 = City.objects.create(name='Berisso')
+        self.client1 = Client.objects.create(
+            name="Juan Sebastián Veron",
+            phone=54221555232,
+            city=self.city1,
+            email="brujita75@vetsoft.com",
+        )
+        
+        self.product1 = Product.objects.create(
+            name="Product 1",
+            type="1",
+            price=10.0
+        )
+        self.medicine1 = Medicine.objects.create(
+            name="ibuprofeno",
+            description="dscrp",
+            dose=1.0
+        )
+        self.vet1 = Vet.objects.create(
+            name = "vet1",
+            phone = "54100",
+            email = "v@vetsoft.com",
+        )
+        self.provider1 = Provider.objects.create(
+            name = "prov1",
+            phone = "54100",
+            email = "v@vetsoft.com",
+            address = "calle 1",
+            floor_apartament = "1",
+            )
+        self.breed1 = Breed.objects.create(
+            name = "Ovejero Aleman"
+        )
+        
+        self.pet1 = Pet.objects.create(
+            name = "Mascota Valida",
+            breed = self.breed1,
+            weight = 5.0,
+            birthday = "2024-05-20"
+        )
+
+    def test_delete_client(self):
+        response = self.client.post(reverse('clients_delete'), {'client_id': self.client1.id})
+        self.assertEqual(response.status_code, 302)  # Redirección exitosa
+        self.assertFalse(Client.objects.filter(id=self.client1.id).exists())  # Cliente eliminado
+
+    def test_delete_product(self):
+        response = self.client.post(reverse('products_delete'), {'product_id': self.product1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Product.objects.filter(id=self.product1.id).exists())
+
+    def test_delete_medicine(self):
+        response = self.client.post(reverse('medicines_delete'), {'medicine_id': self.medicine1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Medicine.objects.filter(id=self.medicine1.id).exists())
+
+    def test_delete_vet(self):
+        response = self.client.post(reverse('vets_delete'), {'vet_id': self.vet1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Vet.objects.filter(id=self.vet1.id).exists())
+
+    def test_delete_provider(self):
+        response = self.client.post(reverse('providers_delete'), {'provider_id': self.provider1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Provider.objects.filter(id=self.provider1.id).exists())
+
+    def test_delete_pet(self):
+        response = self.client.post(reverse('pets_delete'), {'pet_id': self.pet1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Pet.objects.filter(id=self.pet1.id).exists())            
 
 class HomePageTest(TestCase):
     def test_use_home_template(self):
