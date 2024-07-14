@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright, expect, Browser
 from django.urls import reverse
 
 from app.models import City, Client, Medicine, Provider, Pet
+from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 playwright = sync_playwright().start()
@@ -35,7 +36,6 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
     def tearDown(self):
         super().tearDown()
         self.page.close()
-
 
 class HomeTestCase(PlaywrightTestCase):
 
