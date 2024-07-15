@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 from django.db import models
 
+from django.core.exceptions import ValidationError
 
 ############################################## CITY ################################################
 class City(models.Model):
@@ -418,9 +419,10 @@ class Pet(models.Model):
     @classmethod
     def save_pet(cls, pet_data):
         """save a product if data passed is correct for a pet"""
-        errors = cls.validate_pet(pet_data)
-        if len(errors.keys()) > 0:
-            return False, errors
+        try:
+            cls.validate_pet(pet_data)
+        except ValidationError as e:
+            return False, e.message_dict
 
         Pet.objects.create(
             name=pet_data.get("name"),
@@ -433,6 +435,11 @@ class Pet(models.Model):
 
     def update_pet(self, pet_data):
         """update a pet if data passed is correct"""
+        try:
+            self.validate_pet(pet_data)
+        except ValidationError as e:
+            return False, e.message_dict
+
         self.name = pet_data.get("name", "") or self.name
         self.breed = Breed.objects.get(pk=pet_data.get("breed")) or self.breed
         self.birthday = pet_data.get("birthday", "") or self.birthday
