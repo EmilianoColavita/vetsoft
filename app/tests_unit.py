@@ -373,6 +373,24 @@ class PetModelTest(TestCase):
         self.assertFalse(result)
         # verifico que haya errores registrados
         self.assertIsNotNone(errors)
+    
+    def test_can_update_pet(self):
+        breed = Breed.objects.create(name='B')
+        p = Pet.objects.create(
+            name = "Mascota Valida",
+            breed = breed,
+            weight = 5.0,
+            birthday = "2024-05-20"
+        )
+        data = {
+            "id": p.id,
+            "name": p.name,
+            "breed": p.breed.id,
+            "weight": p.weight,
+            "birthday": p.birthday,
+        }
+        response = self.client.post(reverse('pets_edit', kwargs={"id": p.id}), data=data)
+        self.assertTrue(response.status_code < 400)        
         
 class CityModelTest(TestCase):
     def test_can_create_city(self):
