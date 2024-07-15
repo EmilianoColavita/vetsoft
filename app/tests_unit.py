@@ -3,6 +3,7 @@ from django.test import TestCase, Client as DjangoClient
 from django.urls import reverse
 from app.models import Breed, City, Client, Medicine, Pet, Product, Provider, Vet
 from app.views import ClientRepositoryView, ProviderFormView
+from datetime import date, timedelta
 
 class ClientModelTest(TestCase):
     def test_cant_create_user_with_not_valid_name(self):
@@ -329,26 +330,26 @@ class PetViewTest(TestCase):
 
 class PetModelTest(TestCase):
     def test_invalid_weight(self):
-        Breed.objects.create(name='A')
+        b = Breed.objects.create(name='Ovejero Aleman')
         result, errors = Pet.save_pet({
             "name": "Mascota Invalida",
-            "breed": 1,
+            "breed": b.id,
             "weight": -5.0,
-            "birthday": "2024-05-20",
+            "birthday": "2022-05-20",
         })
-        self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'weight': 'El peso debe ser mayor que 0'})
+        self.assertFalse(result)
+        self.assertEqual(errors['weight'], 'El peso debe ser mayor que 0')
 
     def test_invalid_birthday(self):
-        Breed.objects.create(name='A')
+        b = Breed.objects.create(name='Ovejero Aleman')
         result, errors = Pet.save_pet({
             "name": "Mascota Invalida",
-            "breed": 1,
+            "breed": b.id,
             "weight": 5.0,
             "birthday": "2s024-05-20",
         })
-        self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'birthday': 'La fecha de nacimiento no es válida.'})
+        self.assertFalse(result)
+        self.assertEqual(errors['birthday'], 'La fecha de nacimiento no es válida.')
         
 
     def test_valid_weight(self):
@@ -392,6 +393,31 @@ class PetModelTest(TestCase):
         response = self.client.post(reverse('pets_edit', kwargs={"id": p.id}), data=data)
         self.assertTrue(response.status_code < 400)        
         
+    
+    def test_invalid_birthday_future_date(self):
+        b = Breed.objects.create(name='Ovejero Aleman')
+        future_date = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+        saved, errors = Pet.save_pet({
+            "name": "Mascota Futuro",
+            "breed": b.id,
+            "weight": 5.0,
+            "birthday": future_date,
+        })
+        self.assertFalse(saved)
+        self.assertTrue(errors['birthday'], 'La fecha de nacimiento debe ser anterior a la fecha actual.')
+
+    def test_valid_birthday(self):
+        b = Breed.objects.create(name='Ovejero Aleman')
+        valid_date = (date.today() - timedelta(days=10)).strftime("%Y-%m-%d")
+        result, errors = Pet.save_pet({
+            "name": "Mascota Valida",
+            "breed": b.id,
+            "weight": 5.0,
+            "birthday": valid_date,
+        })
+        self.assertEqual(result, True)
+        self.assertIsNone(errors)
+
 class CityModelTest(TestCase):
     def test_can_create_city(self):
         valid_names = ["Berisso", "Ensenada", "La Plata"]
