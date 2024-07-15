@@ -419,18 +419,22 @@ class Pet(models.Model):
     @classmethod
     def save_pet(cls, pet_data):
         """save a product if data passed is correct for a pet"""
+        errors = {} 
         try:
-            cls.validate_pet(pet_data)
+            errors = cls.validate_pet(pet_data)
         except ValidationError as e:
             return False, e.message_dict
 
-        Pet.objects.create(
-            name=pet_data.get("name"),
-            breed=Breed.objects.get(pk=pet_data.get("breed")),
-            birthday=pet_data.get("birthday"),
-            weight=pet_data.get("weight"),
-        )
-
+        try:
+            Pet.objects.create(
+                name=pet_data.get("name"),
+                breed=Breed.objects.get(pk=pet_data.get("breed")),
+                birthday=pet_data.get("birthday"),
+                weight=pet_data.get("weight"),
+            )
+        except Exception as e:
+            return False, errors
+            
         return True, None
 
     def update_pet(self, pet_data):
