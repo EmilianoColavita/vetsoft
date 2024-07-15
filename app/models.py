@@ -432,7 +432,7 @@ class Pet(models.Model):
                 birthday=pet_data.get("birthday"),
                 weight=pet_data.get("weight"),
             )
-        except Exception as e:
+        except Exception:
             return False, errors
             
         return True, None
