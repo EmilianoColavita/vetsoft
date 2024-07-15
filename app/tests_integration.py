@@ -6,10 +6,10 @@ from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, Vet
 
 class ViewTestCase(TestCase):
     def test_urls_are_correct(self):
-        self.assertTrue(PetFormView.template_name, 'pets/form.html')
-        self.assertTrue(VetFormView.template_name, 'vets/form.html')
-        self.assertTrue(MedicineFormView.template_name, 'medicines/form.html')
-        self.assertTrue(MedicineRepositoryView.template_name, 'medicines/repository.html')
+        self.assertEqual(PetFormView.template_name, 'pets/form.html')
+        self.assertEqual(VetFormView.template_name, 'vets/form.html')
+        self.assertEqual(MedicineFormView.template_name, 'medicines/form.html')
+        self.assertEqual(MedicineRepositoryView.template_name, 'medicines/repository.html')
 
     def test_can_go_pages(self):
         responses = []
