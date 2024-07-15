@@ -10,9 +10,6 @@ class City(models.Model):
     Representa la lista de ciudades
     """
     name = models.CharField(max_length=10, unique=True)
-    def _str_(self):
-        return self.name
-
 ####################################################################################################
 
 ############################################## CLIENT ##############################################
@@ -363,8 +360,7 @@ class Breed(models.Model):
     Representa a los tipos de razas
     """
     name = models.CharField(max_length=50, unique=True)
-    def _str_(self):
-        return self.name
+
 
 ####################################################################################################
 
