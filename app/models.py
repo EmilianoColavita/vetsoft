@@ -403,11 +403,16 @@ class Pet(models.Model):
         if breed == "":
             errors["breed"] = "Por favor ingrese una raza"
 
+
         if weight == "":
             errors["weight"] = "Por favor ingrese un peso"
         else:
-            if (float(weight) < 0):
-                errors["weight"] = "El peso debe ser mayor que 0"
+            try:
+                weight_float = float(weight)
+                if weight_float <= 0:
+                    errors["weight"] = "El peso debe ser mayor que 0"
+            except ValueError:
+                errors["weight"] = "El peso debe ser un número válido"
         return errors
 
     @classmethod
@@ -431,6 +436,7 @@ class Pet(models.Model):
         self.name = pet_data.get("name", "") or self.name
         self.breed = Breed.objects.get(pk=pet_data.get("breed")) or self.breed
         self.birthday = pet_data.get("birthday", "") or self.birthday
+        self.weight = pet_data.get("weight", "") or self.weight
 
         self.save()
         return True, None
