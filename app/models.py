@@ -394,7 +394,7 @@ class Pet(models.Model):
                 birthday_date = datetime.strptime(birthday, "%Y-%m-%d").date()
                 if birthday_date >= date.today():
                     errors['birthday'] = 'La fecha de nacimiento debe ser anterior a la fecha actual.'
-            except (ValueError, TypeError) as e:
+            except (ValueError, TypeError):
              errors['birthday'] = 'La fecha de nacimiento no es válida.'
 
         if name == "":
