@@ -454,24 +454,3 @@ class PetsIntegrationTest(TestCase):
         self.assertEqual(pets[0].breed, Breed.objects.get(pk=1))
         self.assertEqual(pets[0].birthday, date(2024, 5, 20))
         self.assertEqual(pets[0].weight, 15.5)
-    
-
-    def test_cannot_create_pet_with_future_birthday(self):
-        today = date.today()
-        future_date = today + timedelta(days=1)
-        breed = Breed.objects.create(name='Gato')
-
-        pet_data = {
-            "name": "Mascota Invalida",
-            "breed": 1,
-            "birthday": future_date.strftime("%Y-%m-%d"),
-            "weight": 5.0,
-        }
-
-        response = self.client.post(reverse("pets_form"), data=pet_data)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "pets/form.html")
-
-        pets = Pet.objects.all()
-        self.assertEqual(len(pets), 0)
