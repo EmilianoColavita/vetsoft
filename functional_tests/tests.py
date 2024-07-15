@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright, expect, Browser
 
 from django.urls import reverse
 
-from app.models import City, Client, Medicine, Provider, Pet
+from app.models import Breed, City, Client, Medicine, Provider, Pet
 from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -553,3 +553,37 @@ class MedicineTest(PlaywrightTestCase):
         expect(self.page.get_by_text("Naproxeno")).to_be_visible()
         expect(self.page.get_by_text("Analgésico")).to_be_visible()
         expect(self.page.get_by_text("5")).to_be_visible()
+
+        
+class PetsIntegrationTest(PlaywrightTestCase):
+    def test_should_show_pets_data(self):
+        breed1 = Breed.objects.create(name='Ovejero_aleman')
+        breed2 = Breed.objects.create(name='Golden_retriever')
+
+        pet1 = Pet.objects.create(
+            name="K-9",
+            breed=breed1,
+            weight=50.0,
+            birthday=date(2024, 1, 1),
+        )          
+
+        pet2 = Pet.objects.create(
+            name="Mi mascota",
+            breed=breed2,
+            weight=90.0,
+            birthday=date(2024, 11, 9),      
+        )
+
+        self.page.goto(f"{self.live_server_url}{reverse('pets_repo')}")
+
+        expect(self.page.get_by_text("No existen mascotas")).not_to_be_visible()
+
+        expect(self.page.get_by_text("K-9")).to_be_visible()
+        expect(self.page.get_by_text("Ovejero_aleman")).to_be_visible()
+        expect(self.page.get_by_text("50.0")).to_be_visible()
+        expect(self.page.get_by_text("Jan. 1, 2024")).to_be_visible()
+
+        expect(self.page.get_by_text("Mi mascota")).to_be_visible()
+        expect(self.page.get_by_text("Golden_retriever")).to_be_visible()
+        expect(self.page.get_by_text("90.0")).to_be_visible()
+        expect(self.page.get_by_text("Nov. 9, 2024")).to_be_visible()
