@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.shortcuts import reverse
-from app.models import Breed, City, Client, Medicine, Pet, Product, Vet, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Provider, Vet
 from datetime import date, datetime, timedelta
 from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
@@ -437,21 +437,41 @@ class VetsIntegrationTest(TestCase):
 ####################### PET ##############################
 
 class PetsIntegrationTest(TestCase):
-  def test_cannot_create_pet_with_future_birthday(self):
 
-    today = date.today()
-    future_date = today + timedelta(days=1)
-    pet_data = {
-        "name": "Mascota Invalida",
-        "breed": "Gato",
-        "birthday": future_date.strftime("%Y-%m-%d"),
-        "weight": 5.0,
-    }
+    def test_can_create_pet_with_breed(self):
+        breed = Breed.objects.create(name='Ovejero aleman')
+        response = Pet.save_pet({
+                "name": "K-nine",
+                "breed": 1,
+                "birthday": "2024-05-20",
+                "weight": 15.5,
+            },
+        )
+        pets = Pet.objects.all()
+        self.assertEqual(len(pets), 1)
 
-    response = self.client.post(reverse("pets_form"), data=pet_data)
+        self.assertEqual(pets[0].name, "K-nine")
+        self.assertEqual(pets[0].breed, Breed.objects.get(pk=1))
+        self.assertEqual(pets[0].birthday, date(2024, 5, 20))
+        self.assertEqual(pets[0].weight, 15.5)
+    
 
-    self.assertEqual(response.status_code, 200)
-    self.assertTemplateUsed(response, "pets/form.html")
+    def test_cannot_create_pet_with_future_birthday(self):
+        today = date.today()
+        future_date = today + timedelta(days=1)
+        breed = Breed.objects.create(name='Gato')
 
-    pets = Pet.objects.all()
-    self.assertEqual(len(pets), 0)
+        pet_data = {
+            "name": "Mascota Invalida",
+            "breed": 1,
+            "birthday": future_date.strftime("%Y-%m-%d"),
+            "weight": 5.0,
+        }
+
+        response = self.client.post(reverse("pets_form"), data=pet_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pets/form.html")
+
+        pets = Pet.objects.all()
+        self.assertEqual(len(pets), 0)
