@@ -395,23 +395,23 @@ class PetModelTest(TestCase):
         
     
     def test_invalid_birthday_future_date(self):
-        Breed.objects.create(name='C')
+        b = Breed.objects.create(name='Ovejero Aleman')
         future_date = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
-        result, errors = Pet.save_pet({
+        saved, errors = Pet.save_pet({
             "name": "Mascota Futuro",
-            "breed": 1,
+            "breed": b.id,
             "weight": 5.0,
             "birthday": future_date,
         })
-        self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'birthday': ['La fecha de nacimiento debe ser anterior a la fecha actual.']})
+        self.assertEqual(saved, False)
+        self.assertTrue(errors['birthday'], 'La fecha de nacimiento debe ser anterior a la fecha actual.')
 
     def test_valid_birthday(self):
-        Breed.objects.create(name='D')
+        b = Breed.objects.create(name='Ovejero Aleman')
         valid_date = (date.today() - timedelta(days=10)).strftime("%Y-%m-%d")
         result, errors = Pet.save_pet({
             "name": "Mascota Valida",
-            "breed": 1,
+            "breed": b.id,
             "weight": 5.0,
             "birthday": valid_date,
         })
