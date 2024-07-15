@@ -114,6 +114,18 @@ class ClientViewsTest(TestCase):
         self.assertTemplateUsed(response, 'clients/repository.html')
 
 class VetModelTest(TestCase):
+    def test_can_create_vet(self):
+        saved, errors = Vet.save_vet(
+            {
+                "name": "Veterinaria 1",
+                "phone": "54100",
+                "email": "Veterinaria@vetsoft.com"
+            }
+        )
+        
+        self.assertTrue(saved)
+        self.assertFalse(errors)
+        
     def test_cant_create_vet_with_invalid_name(self):
         result, errors = Vet.save_vet(
             {
@@ -326,6 +338,18 @@ class PetModelTest(TestCase):
         })
         self.assertEqual(result, False)
         self.assertDictEqual(errors, {'weight': 'El peso debe ser mayor que 0'})
+
+    def test_invalid_birthday(self):
+        Breed.objects.create(name='A')
+        result, errors = Pet.save_pet({
+            "name": "Mascota Invalida",
+            "breed": 1,
+            "weight": 5.0,
+            "birthday": "2s024-05-20",
+        })
+        self.assertEqual(result, False)
+        self.assertDictEqual(errors, {'birthday': 'La fecha de nacimiento no es válida.'})
+        
 
     def test_valid_weight(self):
         Breed.objects.create(name='B')
