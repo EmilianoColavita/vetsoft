@@ -219,9 +219,34 @@ class MedicineViewsTest(TestCase):
         self.assertTemplateUsed(response, 'medicines/repository.html')
 
 class MedicineModelTest(TestCase):
+    def test_invalid_name(self):
+        result, errors = Medicine.save_medicine({
+            "name": "nombre con espacios",
+            "description": "Descripción",
+            "dose": 1.0,
+        })
+        self.assertEqual(result, False)
+        self.assertDictEqual(errors, {'name': 'Los nombres de medicamento no pueden contener ni ñ ni espacios'})
+        
+        result, errors = Medicine.save_medicine({
+            "name": "ñombre_con_ñ",
+            "description": "Descripción",
+            "dose": 1.0,
+        })
+        self.assertEqual(result, False)
+        self.assertDictEqual(errors, {'name': 'Los nombres de medicamento no pueden contener ni ñ ni espacios'})
+        
+    def test_valid_name(self):
+        result, errors = Medicine.save_medicine({
+            "name": "nombre_con_espacios",
+            "description": "Descripción",
+            "dose": 1.0,
+        })
+        self.assertEqual(result, True)
+        
     def test_invalid_dose(self):
         result, errors = Medicine.save_medicine({
-            "name": "Medicina Invalida",
+            "name": "Medicina_Invalida",
             "description": "Descripción",
             "dose": 0.5,
         })
@@ -230,7 +255,7 @@ class MedicineModelTest(TestCase):
 
     def test_valid_dose(self):
         result, errors = Medicine.save_medicine({
-            "name": "Medicina Valida",
+            "name": "Medicina_Valida",
             "description": "Descripción",
             "dose": 5.0,
         })

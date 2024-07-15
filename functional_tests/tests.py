@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright, expect, Browser
 from django.urls import reverse
 
 from app.models import City, Client, Medicine, Provider, Pet
+from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 playwright = sync_playwright().start()
@@ -35,7 +36,6 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
     def tearDown(self):
         super().tearDown()
         self.page.close()
-
 
 class HomeTestCase(PlaywrightTestCase):
 
@@ -410,6 +410,20 @@ class MedicineTest(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
         expect(self.page.get_by_text("No existen medicamentos")).to_be_visible()
 
+    def test_should_create_valid_medicine(self):
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
+        # cargo el medicamento
+        self.page.get_by_label("Nombre").fill("Ibuprofeno")
+        self.page.get_by_label("Descripción").fill("descrp")
+        self.page.get_by_label("Dosis").fill("4.0")
+        self.page.get_by_role("button", name="Guardar").click()
+        
+        # reviso que aparezca en repo
+        self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
+        expect(self.page.get_by_text("Ibuprofeno")).to_be_visible()
+        expect(self.page.get_by_text("descrp")).to_be_visible()
+        expect(self.page.get_by_text("4.0")).to_be_visible()
+        
     def test_should_show_medicines_data(self):
         Medicine.objects.create(
             name="Aspirina",

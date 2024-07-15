@@ -1,8 +1,149 @@
 from django.test import TestCase
 from django.shortcuts import reverse
-from app.models import City, Client, Medicine, Pet, Product, Vet, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Vet, Provider
 from datetime import date, datetime, timedelta
+from app.views import MedicineFormView, MedicineRepositoryView, PetFormView, VetFormView
 
+class ViewTestCase(TestCase):
+    def test_urls_are_correct(self):
+        self.assertEqual(PetFormView.template_name, 'pets/form.html')
+        self.assertEqual(VetFormView.template_name, 'vets/form.html')
+        self.assertEqual(MedicineFormView.template_name, 'medicines/form.html')
+        self.assertEqual(MedicineRepositoryView.template_name, 'medicines/repository.html')
+
+    def test_can_go_pages(self):
+        responses = []
+        # Obtener URLs y respuestas para clientes
+        r_client_repo = self.client.get(reverse('clients_repo'))
+        r_client_form = self.client.get(reverse('clients_form'))
+        responses.append(r_client_repo)
+        responses.append(r_client_form)
+
+        # Obtener URLs y respuestas para medicines
+        r_medicine_repo = self.client.get(reverse('medicines_repo'))
+        r_medicine_form = self.client.get(reverse('medicines_form'))
+        responses.append(r_medicine_repo)
+        responses.append(r_medicine_form)
+        
+        # Obtener URLs y respuestas para productos
+        r_product_repo = self.client.get(reverse('products_repo'))
+        r_product_form = self.client.get(reverse('products_form'))
+        responses.append(r_product_repo)
+        responses.append(r_product_form)
+        
+        # Obtener URLs y respuestas para vets
+        r_vet_repo = self.client.get(reverse('vets_repo'))
+        r_vet_form = self.client.get(reverse('vets_form'))
+        responses.append(r_vet_repo)
+        responses.append(r_vet_form)
+
+        # Obtener URLs y respuestas para providers
+        r_provider_repo = self.client.get(reverse('providers_repo'))
+        r_provider_form = self.client.get(reverse('providers_form'))
+        responses.append(r_provider_repo)
+        responses.append(r_provider_form)
+        
+        # Valido las responses
+        self.assertTrue(all((r.status_code < 400) for r in responses))
+    
+    def test_post_forms_urls_exists(self):
+        responses = []
+        # Obtener URLs y respuestas para clientes
+        r_client_form = self.client.post(reverse('clients_form'))
+        responses.append(r_client_form)
+
+        # Obtener URLs y respuestas para medicines
+        r_medicine_form = self.client.post(reverse('medicines_form'))
+        responses.append(r_medicine_form)
+
+        # Obtener URLs y respuestas para productos
+        r_product_form = self.client.post(reverse('products_form'))
+        responses.append(r_product_form)
+
+        # Obtener URLs y respuestas para vets
+        r_vet_form = self.client.post(reverse('vets_form'))
+        responses.append(r_vet_form)
+
+        # Obtener URLs y respuestas para providers
+        r_provider_form = self.client.post(reverse('providers_form'))
+        responses.append(r_provider_form)
+
+        # Valido las responses
+        self.assertTrue(all((r.status_code != 404) for r in responses))
+
+class DeleteViewTestCase(TestCase):
+    def setUp(self):
+        # Crear objetos de prueba
+        self.city1 = City.objects.create(name='Berisso')
+        self.client1 = Client.objects.create(
+            name="Juan Sebastián Veron",
+            phone=54221555232,
+            city=self.city1,
+            email="brujita75@vetsoft.com",
+        )
+        
+        self.product1 = Product.objects.create(
+            name="Product 1",
+            type="1",
+            price=10.0
+        )
+        self.medicine1 = Medicine.objects.create(
+            name="ibuprofeno",
+            description="dscrp",
+            dose=1.0
+        )
+        self.vet1 = Vet.objects.create(
+            name = "vet1",
+            phone = "54100",
+            email = "v@vetsoft.com",
+        )
+        self.provider1 = Provider.objects.create(
+            name = "prov1",
+            phone = "54100",
+            email = "v@vetsoft.com",
+            address = "calle 1",
+            floor_apartament = "1",
+            )
+        self.breed1 = Breed.objects.create(
+            name = "Ovejero Aleman"
+        )
+        
+        self.pet1 = Pet.objects.create(
+            name = "Mascota Valida",
+            breed = self.breed1,
+            weight = 5.0,
+            birthday = "2024-05-20"
+        )
+
+    def test_delete_client(self):
+        response = self.client.post(reverse('clients_delete'), {'client_id': self.client1.id})
+        self.assertEqual(response.status_code, 302)  # Redirección exitosa
+        self.assertFalse(Client.objects.filter(id=self.client1.id).exists())  # Cliente eliminado
+
+    def test_delete_product(self):
+        response = self.client.post(reverse('products_delete'), {'product_id': self.product1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Product.objects.filter(id=self.product1.id).exists())
+
+    def test_delete_medicine(self):
+        response = self.client.post(reverse('medicines_delete'), {'medicine_id': self.medicine1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Medicine.objects.filter(id=self.medicine1.id).exists())
+
+    def test_delete_vet(self):
+        response = self.client.post(reverse('vets_delete'), {'vet_id': self.vet1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Vet.objects.filter(id=self.vet1.id).exists())
+
+    def test_delete_provider(self):
+        response = self.client.post(reverse('providers_delete'), {'provider_id': self.provider1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Provider.objects.filter(id=self.provider1.id).exists())
+
+    def test_delete_pet(self):
+        response = self.client.post(reverse('pets_delete'), {'pet_id': self.pet1.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Pet.objects.filter(id=self.pet1.id).exists())            
 
 class HomePageTest(TestCase):
     def test_use_home_template(self):
@@ -109,7 +250,37 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.phone, client.phone)
         self.assertEqual(editedClient.city.id, city.id)
         self.assertEqual(editedClient.email, client.email)
+        
+        def test_update_client(self):
+            client = Client.objects.create(
+                name="Cliente Test",
+                phone="54123456789",
+                email="cliente@test.com",
+                city=self.city
+            )
 
+            # Preparar datos para actualizar
+            updated_data = {
+                "name": "Cliente Actualizado",
+                "phone": "54123456789",
+                "email": "cliente_actualizado@test.com",
+                "city": self.another_city.id  # Cambiar a otra ciudad existente
+            }
+
+            # Llamar al método de actualización
+            success, errors = client.update_client(updated_data)
+
+            # Verificar que la actualización fue exitosa
+            self.assertTrue(success)
+            self.assertIsNone(errors)
+
+            # Recuperar el cliente actualizado desde la base de datos
+            updated_client = Client.objects.get(id=client.id)
+
+            # Verificar que los datos fueron actualizados correctamente
+            self.assertEqual(updated_client.name, updated_data["name"])
+            self.assertEqual(updated_client.email, updated_data["email"])
+            self.assertEqual(updated_client.city.id, updated_data["city"])
 
 ##### PROVEDOR #####
 
@@ -161,6 +332,106 @@ class ProviderIntegrationTest(TestCase):
         )
 
         self.assertContains(response, "Por favor ingrese un email valido")
+
+class MedicinesIntegrationTest(TestCase):
+    def test_can_create_medicine_and_view_in_list(self):
+        medicine_data = {
+            'name': 'Ibuprofeno',
+            'description': 'desc',
+            'dose': 1.0
+        }
+
+        response = self.client.post(reverse('medicines_form'), data=medicine_data)
+        self.assertTrue(response.status_code < 400)
+        
+    def test_update_medicine(self):
+            medicine = Medicine.objects.create(
+                name="MedicinaTest",
+                description="Descripción de Medicina Test",
+                dose=5.0
+            )
+
+            # Preparar datos para actualizar
+            updated_data = {
+                "name": "MedicinaActualizada",
+                "description": "Descripción Actualizada",
+                "dose": 7.5
+            }
+
+            # Llamar al método de actualización
+            success, errors = medicine.update_medicine(updated_data)
+
+            # Verificar que la actualización fue exitosa
+            self.assertTrue(success)
+            self.assertIsNone(errors)
+
+            # Recuperar la medicina actualizada desde la base de datos
+            updated_medicine = Medicine.objects.get(id=medicine.id)
+
+            # Verificar que los datos fueron actualizados correctamente
+            self.assertEqual(updated_medicine.name, updated_data["name"])
+            self.assertEqual(updated_medicine.description, updated_data["description"])
+            self.assertEqual(updated_medicine.dose, updated_data["dose"])
+
+class ProductsIntegrationTest(TestCase):
+    def test_update_product(self):
+        product = Product.objects.create(
+            name="Producto Test",
+            type="Tipo Test",
+            price=100.0
+        )
+
+        # Preparar datos para actualizar
+        updated_data = {
+            "name": "Producto Actualizado",
+            "type": "Tipo Actualizado",
+            "price": 150.0
+        }
+
+        # Llamar al método de actualización
+        success, errors = product.update_product(updated_data)
+
+        # Verificar que la actualización fue exitosa
+        self.assertTrue(success)
+        self.assertIsNone(errors)
+
+        # Recuperar el producto actualizado desde la base de datos
+        updated_product = Product.objects.get(id=product.id)
+
+        # Verificar que los datos fueron actualizados correctamente
+        self.assertEqual(updated_product.name, updated_data["name"])
+        self.assertEqual(updated_product.type, updated_data["type"])
+        self.assertEqual(updated_product.price, updated_data["price"])
+
+class VetsIntegrationTest(TestCase):
+    def test_update_vet(self):
+        vet = Vet.objects.create(
+            name="Veterinario Test",
+            phone="54123456789",
+            email="vet@test.com"
+        )
+
+        # Preparar datos para actualizar
+        updated_data = {
+            "name": "Veterinario Actualizado",
+            "phone": "54987654321",
+            "email": "vet_actualizado@test.com"
+        }
+
+        # Llamar al método de actualización
+        success, errors = vet.update_vet(updated_data)
+
+        # Verificar que la actualización fue exitosa
+        self.assertTrue(success)
+        self.assertIsNone(errors)
+
+        # Recuperar el veterinario actualizado desde la base de datos
+        updated_vet = Vet.objects.get(id=vet.id)
+
+        # Verificar que los datos fueron actualizados correctamente
+        self.assertEqual(updated_vet.name, updated_data["name"])
+        self.assertEqual(updated_vet.phone, updated_data["phone"])
+        self.assertEqual(updated_vet.email, updated_data["email"])
 
 
 ####################### PET ##############################
