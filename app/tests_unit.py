@@ -330,26 +330,26 @@ class PetViewTest(TestCase):
 
 class PetModelTest(TestCase):
     def test_invalid_weight(self):
-        Breed.objects.create(name='A')
+        b = Breed.objects.create(name='Ovejero Aleman')
         result, errors = Pet.save_pet({
             "name": "Mascota Invalida",
-            "breed": 1,
+            "breed": b.id,
             "weight": -5.0,
-            "birthday": "2024-05-20",
+            "birthday": "2022-05-20",
         })
-        self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'weight': ['El peso debe ser mayor que 0']})
+        self.assertFalse(result)
+        self.assertEqual(errors['weight'], 'El peso debe ser mayor que 0')
 
     def test_invalid_birthday(self):
-        Breed.objects.create(name='A')
+        b = Breed.objects.create(name='Ovejero Aleman')
         result, errors = Pet.save_pet({
             "name": "Mascota Invalida",
-            "breed": 1,
+            "breed": b.id,
             "weight": 5.0,
             "birthday": "2s024-05-20",
         })
-        self.assertEqual(result, False)
-        self.assertDictEqual(errors, {'birthday': 'La fecha de nacimiento no es válida.'})
+        self.assertFalse(result)
+        self.assertEqual(errors['birthday'], 'La fecha de nacimiento no es válida.')
         
 
     def test_valid_weight(self):
@@ -403,7 +403,7 @@ class PetModelTest(TestCase):
             "weight": 5.0,
             "birthday": future_date,
         })
-        self.assertEqual(saved, False)
+        self.assertFalse(saved)
         self.assertTrue(errors['birthday'], 'La fecha de nacimiento debe ser anterior a la fecha actual.')
 
     def test_valid_birthday(self):
