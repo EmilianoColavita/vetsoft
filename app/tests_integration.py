@@ -70,6 +70,39 @@ class ViewTestCase(TestCase):
 
         # Valido las responses
         self.assertTrue(all((r.status_code != 404) for r in responses))
+    
+    def test_cant_post_forms_urls_with_invalid_id(self):
+        responses = []
+        INVALID_ID = "1232245"
+
+        # Obtener URLs y respuestas para clientes
+        r_client_form = self.client.post(reverse('clients_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_client_form)
+
+        # Obtener URLs y respuestas para medicines
+        r_medicine_form = self.client.post(reverse('medicines_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_medicine_form)
+
+        # Obtener URLs y respuestas para productos
+        r_product_form = self.client.post(reverse('products_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_product_form)
+
+        # Obtener URLs y respuestas para vets
+        r_vet_form = self.client.post(reverse('vets_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_vet_form)
+
+        # Obtener URLs y respuestas para providers
+        r_provider_form = self.client.post(reverse('providers_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_provider_form)
+
+        # Obtener URLs y respuestas para pets
+        r_pet_form = self.client.post(reverse('pets_edit', kwargs={"id": "1"}), data={"id": INVALID_ID})
+        responses.append(r_pet_form)
+
+        # Validar las respuestas
+        self.assertTrue(all(r.status_code > 400 for r in responses))
+
+
 
 class DeleteViewTestCase(TestCase):
     def setUp(self):

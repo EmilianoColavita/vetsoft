@@ -1,11 +1,10 @@
 from django.forms import ValidationError
 from django.test import TestCase, Client as DjangoClient
 from django.urls import reverse
-from app.models import Breed, City, Client, Medicine, Pet, Product, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Provider, Vet
 from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
-
     def test_cant_create_user_with_not_valid_name(self):
             saved, errors = Client.save_client(
                 {
@@ -52,6 +51,19 @@ class ClientModelTest(TestCase):
         self.assertEqual(clients[0].phone, 54221555232)
         self.assertEqual(clients[0].city.id, city.id)
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
+
+    def test_cant_create_client_with_invalid_city(self):
+        INVENTED_CITY_ID = 2384
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "54221555232",
+                "city": INVENTED_CITY_ID,
+                "email": "brujita75@vetsoft.com",
+            }
+        )
+        self.assertFalse(saved)
+        self.assertIsNotNone(errors)
 
     def test_can_update_client(self):
         city = City.objects.create(name='Berisso')
@@ -100,6 +112,31 @@ class ClientViewsTest(TestCase):
         response = self.clientView.get(reverse('clients_repo'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'clients/repository.html')
+
+class VetModelTest(TestCase):
+    def test_can_create_vet(self):
+        saved, errors = Vet.save_vet(
+            {
+                "name": "Veterinaria 1",
+                "phone": "54100",
+                "email": "Veterinaria@vetsoft.com"
+            }
+        )
+        
+        self.assertTrue(saved)
+        self.assertFalse(errors)
+        
+    def test_cant_create_vet_with_invalid_name(self):
+        result, errors = Vet.save_vet(
+            {
+                "name": "vet1",
+                "phone": "54014",
+                "email": "xxxxx"
+            }
+        )
+        
+        self.assertFalse(result)
+        self.assertIsNotNone(errors)
 
 ##### PROVEDOR #####
 class ProviderModelTest(TestCase):
@@ -302,6 +339,18 @@ class PetModelTest(TestCase):
         self.assertEqual(result, False)
         self.assertDictEqual(errors, {'weight': 'El peso debe ser mayor que 0'})
 
+    def test_invalid_birthday(self):
+        Breed.objects.create(name='A')
+        result, errors = Pet.save_pet({
+            "name": "Mascota Invalida",
+            "breed": 1,
+            "weight": 5.0,
+            "birthday": "2s024-05-20",
+        })
+        self.assertEqual(result, False)
+        self.assertDictEqual(errors, {'birthday': 'La fecha de nacimiento no es válida.'})
+        
+
     def test_valid_weight(self):
         Breed.objects.create(name='B')
         result, errors = Pet.save_pet({
@@ -312,7 +361,37 @@ class PetModelTest(TestCase):
         })
         self.assertEqual(result, True)
         self.assertIsNone(errors)
-
+        
+    def test_cant_create_empty_pet(self):
+        result, errors = Pet.save_pet({
+            "name": "",
+            "breed": 0,
+            "weight": 0,
+            "birthday": "",
+        })
+        # verifico que no haya guardado
+        self.assertFalse(result)
+        # verifico que haya errores registrados
+        self.assertIsNotNone(errors)
+    
+    def test_can_update_pet(self):
+        breed = Breed.objects.create(name='B')
+        p = Pet.objects.create(
+            name = "Mascota Valida",
+            breed = breed,
+            weight = 5.0,
+            birthday = "2024-05-20"
+        )
+        data = {
+            "id": p.id,
+            "name": p.name,
+            "breed": p.breed.id,
+            "weight": p.weight,
+            "birthday": p.birthday,
+        }
+        response = self.client.post(reverse('pets_edit', kwargs={"id": p.id}), data=data)
+        self.assertTrue(response.status_code < 400)        
+        
 class CityModelTest(TestCase):
     def test_can_create_city(self):
         valid_names = ["Berisso", "Ensenada", "La Plata"]

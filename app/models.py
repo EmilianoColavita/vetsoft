@@ -10,9 +10,6 @@ class City(models.Model):
     Representa la lista de ciudades
     """
     name = models.CharField(max_length=10, unique=True)
-    def _str_(self):
-        return self.name
-
 ####################################################################################################
 
 ############################################## CLIENT ##############################################
@@ -102,10 +99,7 @@ class Client(models.Model):
 
         self.save()
         return True, None
-
-    def __str__(self):
-        return self.name
-####################################################################################################
+#####################################################################################
 
 ############################################# PRODUCT ##############################################
 class Product(models.Model):
@@ -163,10 +157,7 @@ class Product(models.Model):
         self.price = product_data.get("price", self.price)
         self.save()
         return True, None
-
-    def __str__(self):
-        return self.name
-####################################################################################################
+#####################################################################################
 
 ############################################# MEDICINE #############################################
 class Medicine(models.Model):
@@ -229,10 +220,7 @@ class Medicine(models.Model):
         self.dose = medicine_data.get("dose", self.dose)
         self.save()
         return True, None
-
-    def __str__(self):
-        return self.name
-####################################################################################################
+#####################################################################################
 
 ############################################### VET ################################################
 class Vet(models.Model):
@@ -282,9 +270,6 @@ class Vet(models.Model):
         )
         return True, None
 
-    def __str__(self):
-        return self.name
-
     def update_vet(self, vet_data):
         """update a vet if data passed is correct"""
         self.name = vet_data.get("name", "") or self.name
@@ -307,9 +292,6 @@ class Provider(models.Model):
     email = models.EmailField()
     address = models.CharField(max_length=100, blank=True)
     floor_apartament = models.CharField(max_length=100, blank=True) #1. Agregar un atributo para la dirección en la clase Provider. agrego localidad.
-
-    def __str__(self):
-        return self.name
 
     @classmethod
     def validate_provider(cls, data):
@@ -378,8 +360,7 @@ class Breed(models.Model):
     Representa a los tipos de razas
     """
     name = models.CharField(max_length=50, unique=True)
-    def _str_(self):
-        return self.name
+
 
 ####################################################################################################
 
@@ -413,7 +394,7 @@ class Pet(models.Model):
                 birthday_date = datetime.strptime(birthday, "%Y-%m-%d").date()
                 if birthday_date >= date.today():
                     errors['birthday'] = 'La fecha de nacimiento debe ser anterior a la fecha actual.'
-            except ValueError:
+            except (ValueError, TypeError):
              errors['birthday'] = 'La fecha de nacimiento no es válida.'
 
         if name == "":
@@ -453,8 +434,5 @@ class Pet(models.Model):
 
         self.save()
         return True, None
-
-    def __str__(self):
-        return self.name
 
 ####################################################################################################
