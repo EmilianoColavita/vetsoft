@@ -5,7 +5,6 @@ from app.models import Breed, City, Client, Medicine, Pet, Product, Provider
 from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
-
     def test_cant_create_user_with_not_valid_name(self):
             saved, errors = Client.save_client(
                 {
@@ -52,6 +51,19 @@ class ClientModelTest(TestCase):
         self.assertEqual(clients[0].phone, 54221555232)
         self.assertEqual(clients[0].city.id, city.id)
         self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
+
+    def test_cant_create_client_with_invalid_city(self):
+        INVENTED_CITY_ID = 2384
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "54221555232",
+                "city": INVENTED_CITY_ID,
+                "email": "brujita75@vetsoft.com",
+            }
+        )
+        self.assertFalse(saved)
+        self.assertIsNotNone(errors)
 
     def test_can_update_client(self):
         city = City.objects.create(name='Berisso')
@@ -312,7 +324,19 @@ class PetModelTest(TestCase):
         })
         self.assertEqual(result, True)
         self.assertIsNone(errors)
-
+        
+    def test_cant_create_empty_pet(self):
+        result, errors = Pet.save_pet({
+            "name": "",
+            "breed": 0,
+            "weight": 0,
+            "birthday": "",
+        })
+        # verifico que no haya guardado
+        self.assertFalse(result)
+        # verifico que haya errores registrados
+        self.assertIsNotNone(errors)
+        
 class CityModelTest(TestCase):
     def test_can_create_city(self):
         valid_names = ["Berisso", "Ensenada", "La Plata"]
