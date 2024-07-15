@@ -1,7 +1,6 @@
 import re
 from datetime import date, datetime
 
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -396,7 +395,7 @@ class Pet(models.Model):
                 if birthday_date >= date.today():
                     errors['birthday'] = 'La fecha de nacimiento debe ser anterior a la fecha actual.'
             except (ValueError, TypeError):
-             errors['birthday'] = 'La fecha de nacimiento no es válida.'
+                errors['birthday'] = 'La fecha de nacimiento no es válida.'
 
         if name == "":
             errors["name"] = "Por favor ingrese un nombre"
@@ -404,13 +403,12 @@ class Pet(models.Model):
         if breed == "":
             errors["breed"] = "Por favor ingrese una raza"
 
-
         if weight == "":
             errors["weight"] = "Por favor ingrese un peso"
         else:
             try:
-                weight_float = float(weight)
-                if weight_float <= 0:
+                weight = float(weight)
+                if weight <= 0:
                     errors["weight"] = "El peso debe ser mayor que 0"
             except ValueError:
                 errors["weight"] = "El peso debe ser un número válido"
@@ -419,12 +417,11 @@ class Pet(models.Model):
     @classmethod
     def save_pet(cls, pet_data):
         """save a product if data passed is correct for a pet"""
-        errors = {} 
-        try:
-            errors = cls.validate_pet(pet_data)
-        except ValidationError as e:
-            return False, e.message_dict
-
+        errors = cls.validate_pet(pet_data)
+        
+        if errors:
+            return False, errors
+            
         try:
             Pet.objects.create(
                 name=pet_data.get("name"),
@@ -439,10 +436,10 @@ class Pet(models.Model):
 
     def update_pet(self, pet_data):
         """update a pet if data passed is correct"""
-        try:
-            self.validate_pet(pet_data)
-        except ValidationError as e:
-            return False, e.message_dict
+        errors = self.validate_pet(pet_data)
+        
+        if errors:
+            return False, errors
 
         self.name = pet_data.get("name", "") or self.name
         self.breed = Breed.objects.get(pk=pet_data.get("breed")) or self.breed
