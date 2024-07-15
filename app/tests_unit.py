@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase, Client as DjangoClient
 from django.urls import reverse
-from app.models import Breed, City, Client, Medicine, Pet, Product, Provider
+from app.models import Breed, City, Client, Medicine, Pet, Product, Provider, Vet
 from app.views import ClientRepositoryView, ProviderFormView
 
 class ClientModelTest(TestCase):
@@ -112,6 +112,19 @@ class ClientViewsTest(TestCase):
         response = self.clientView.get(reverse('clients_repo'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'clients/repository.html')
+
+class VetModelTest(TestCase):
+    def test_cant_create_vet_with_invalid_name(self):
+        result, errors = Vet.save_vet(
+            {
+                "name": "vet1",
+                "phone": "54014",
+                "email": "xxxxx"
+            }
+        )
+        
+        self.assertFalse(result)
+        self.assertIsNotNone(errors)
 
 ##### PROVEDOR #####
 class ProviderModelTest(TestCase):
